@@ -1,0 +1,23 @@
+#inboxes{
+    -fx-font-weight: bold;
+    -fx-font-family: Inter;
+    -fx-font-size: 20;
+}
+
+#sent{
+    -fx-font-weight: bold;
+    -fx-font-family: Inter;
+    -fx-font-size: 20;
+}
+
+#spam{
+    -fx-font-weight: bold;
+    -fx-font-family: Inter;
+    -fx-font-size: 20;
+}
+
+#garbage{
+    -fx-font-weight: bold;
+    -fx-font-family: Inter;
+    -fx-font-size: 20;
+}

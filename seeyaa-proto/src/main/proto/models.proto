@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package email.models;
+
+option java_multiple_files = true;
+option java_package = "com.seeYaa.proto.email";
+option java_outer_classname = "EmailModelsProto";
+
+import "google/protobuf/timestamp.proto";
+
+enum TypeOfLetter {
+  TYPE_OF_LETTER_UNSPECIFIED = 0;
+  INBOXES = 1;
+  SPAM = 2;
+  SENT = 3;
+  GARBAGE = 4;
+  LETTER = 5;
+}
+
+enum FileType {
+  FILE_TYPE_UNSPECIFIED = 0;
+  VIDEO = 1;
+  AUDIO = 2;
+  PDF = 3;
+  WORD = 4;
+  IMAGE = 5;
+  EXECUTABLE = 6;
+  UNKNOWN = 7;
+}
+
+message Users {
+  string id = 1;
+  string email = 2;
+  string firstname = 3;
+  string lastname = 4;
+  string username = 5;
+}
+
+message Letter {
+  string id = 1;
+
+  Users  user_to = 2;
+  Users  user_by = 3;
+
+  string topic = 4;
+  string text = 5;
+
+  google.protobuf.Timestamp created_at = 6;
+  bool                     active_letter = 7;
+  google.protobuf.Timestamp delete_time = 8;
+
+  repeated Answer answers = 9;
+  repeated Files  files = 10;
+}
+
+message Answer {
+  string id = 1;
+  string answer_text = 2;
+
+  Users  user_by_answered = 3;
+
+  google.protobuf.Timestamp created_at = 4;
+}
+
+message Files {
+  int32 id = 1;
+  string name = 2;
+
+  FileType type = 3;
+  int64    size = 4;
+
+  bytes    data = 5;
+
+  Letter   letter = 6;
+}
+
+message MovedLetter {
+  string id = 1;
+  TypeOfLetter type_of_letter = 2;
+
+  Letter letter = 3;
+  Users  moved_by = 4;
+
+  google.protobuf.Timestamp will_delete_at = 5;
+}

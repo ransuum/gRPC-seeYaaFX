@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0"
+            prefWidth="725.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.practice.seeyaa.controller.AIController">
+   <TextArea fx:id="responseAi" layoutX="71.0" layoutY="70.0" prefHeight="518.0" prefWidth="583.0"/>
+</AnchorPane>

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package email.service.storage;
+
+import "google/protobuf/empty.proto";
+import "models.proto";
+
+option java_multiple_files  = true;
+option java_package         = "com.seeyaa.proto.email.service.storage";
+option java_outer_classname = "StorageServiceProto";
+
+message UploadFileRequest {
+  string           letter_id = 1;
+  string           name      = 2;
+  models.FileType  type      = 3;
+  int64            size      = 4;
+  bytes            data      = 5;
+}
+
+message LetterIdRequest { string letter_id = 1; }
+message FileIdRequest   { int32  file_id   = 1; }
+
+message FileMetadata {
+  int32           id   = 1;
+  string          name = 2;
+  models.FileType type = 3;
+  int64           size = 4;
+  bytes           data = 5;
+}
+
+message FilesList         { repeated models.Files  files      = 1; }
+message FileMetadataList  { repeated FileMetadata  metadata   = 1; }
+
+message DownloadFileResponse {
+  bytes  data  = 1;
+}
+
+service StorageService {
+  rpc UploadFile (UploadFileRequest) returns (google.protobuf.Empty);
+
+  rpc DownloadFile (FileIdRequest) returns (DownloadFileResponse);
+
+  rpc GetFilesByLetterId (LetterIdRequest) returns (FilesList);
+
+  rpc GetFileMetadataByLetterId (LetterIdRequest) returns (FileMetadataList);
+
+  rpc GetFileById (FileIdRequest) returns (models.Files);
+}

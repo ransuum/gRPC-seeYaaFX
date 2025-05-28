@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package email.service.answer;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "models.proto";
+
+option java_multiple_files = true;
+option java_package        = "com.seeYaa.proto.email.service.answer";
+option java_outer_classname = "AnswerServiceProto";
+
+message CreateAnswerRequest {
+  string letter_id = 1;
+  string email_by  = 2;
+  string text      = 3;
+}
+
+service AnswerService {
+  rpc CreateAnswer(CreateAnswerRequest) returns (google.protobuf.Empty);
+}

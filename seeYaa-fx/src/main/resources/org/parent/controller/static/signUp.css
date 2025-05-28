@@ -1,0 +1,110 @@
+.root {
+    -fx-background-color: #A5A5A5;
+}
+
+.label {
+    -fx-text-fill: #28032c;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 1);
+    -fx-transition: all 0.2s ease-out;
+}
+
+.label:hover {
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 2);
+}
+
+#labelLogin, #noHaveAcc {
+    -fx-text-fill: #202124;
+}
+
+.button {
+    -fx-background-color: #3F3131;
+    -fx-background-radius: 14px;
+    -fx-font-family: Inter;
+    -fx-text-fill: #ddd2ec;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+    -fx-transition: all 0.2s ease-out;
+}
+
+.button:hover {
+    -fx-background-color: #baa7d9;
+    -fx-text-fill: black;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 12, 0, 0, 4);
+}
+
+.button:pressed {
+    -fx-background-color: black;
+    -fx-text-fill: #baa7d9;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 2);
+}
+
+.button.selected {
+    -fx-background-color: #66b2ff;
+    -fx-text-fill: black;
+}
+
+.text-field {
+    -fx-background-color: #D9D9D9;
+    -fx-background-radius: 12px;
+    -fx-border-width: 0px;
+    -fx-padding: 8px 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+    -fx-transition: all 0.3s ease-out;
+}
+
+.text-field:hover {
+    -fx-background-color: derive(#D9D9D9, 5%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 6, 0, 0, 2);
+}
+
+.text-field:focused {
+    -fx-background-color: derive(#D9D9D9, 10%);
+    -fx-effect: dropshadow(gaussian, rgba(186,167,217,0.4), 8, 0, 0, 2);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.image-view {
+    -fx-transition: all 0.3s ease-out;
+}
+
+.image-view:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+}
+
+#profile-image {
+    -fx-transition: all 0.4s ease-out;
+}
+
+#profile-image:hover {
+    -fx-rotate: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0, 0, 4);
+}
+
+#add-image {
+    -fx-transition: all 0.3s ease-out;
+}
+
+#add-image:hover {
+    -fx-rotate: 90;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 2);
+}
+
+#sign-up-title {
+    -fx-transition: all 0.3s ease-out;
+}
+
+#sign-up-title:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+    -fx-effect: dropshadow(gaussian, rgba(40,3,44,0.3), 10, 0, 0, 3);
+}

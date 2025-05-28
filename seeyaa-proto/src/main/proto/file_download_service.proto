@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package email.service.download;
+
+import "models.proto";
+
+option java_multiple_files = true;
+option java_package        = "com.seeYaa.proto.email.service.download";
+option java_outer_classname = "FileDownloadServiceProto";
+
+message FileIdRequest { int32 file_id = 1; }
+
+service FileDownloadService {
+  rpc GetFile (FileIdRequest) returns (email.models.Files);
+}

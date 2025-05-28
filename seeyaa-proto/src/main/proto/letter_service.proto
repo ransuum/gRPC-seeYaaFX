@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package email.service.letter;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "models.proto";
+
+option java_multiple_files = true;
+option java_package        = "com.seeYaa.proto.email.service.letter";
+option java_outer_classname = "LetterServiceProto";
+
+message LetterRequest {
+  string user_by_email = 1;
+  string user_to_email = 2;
+  string topic         = 3;
+  string text          = 4;
+}
+
+message LetterIdEmailRequest {
+  string letter_id = 1;
+  string email     = 2;
+}
+
+message LetterIdRequest { string id = 1; }
+
+message TopicSearchRequestBy {
+  string topic          = 1;
+  string user_by_email  = 2;
+}
+
+message TopicSearchRequestTo {
+  string topic          = 1;
+  string user_to_email  = 2;
+}
+
+message LetterList { repeated email.models.Letter letters = 1; }
+
+message LetterWithAnswers {
+  string                           letterId  = 1;
+  repeated email.models.Answer     answers = 2;
+  repeated email.models.Answer     answers = 2;
+}
+
+service LetterService {
+  rpc SendLetter            (LetterRequest)          returns (email.models.Letter);
+  rpc SetLetterToSpam       (LetterIdEmailRequest)   returns (google.protobuf.Empty);
+  rpc SetLetterToGarbage    (LetterIdEmailRequest)   returns (google.protobuf.Empty);
+
+  rpc FindById              (LetterIdRequest)        returns (LetterWithAnswers);
+  rpc FindAllSentByTopic    (TopicSearchRequestBy)   returns (LetterList);
+  rpc FindAllInboxByTopic   (TopicSearchRequestTo)   returns (LetterList);
+
+  rpc DeleteLetterById      (LetterIdRequest)        returns (google.protobuf.Empty);
+}

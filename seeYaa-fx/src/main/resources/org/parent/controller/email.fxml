@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="875.0" prefWidth="1309.0" stylesheets="@static/email.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.practice.seeyaa.controller.EmailController">
+   <AnchorPane fx:id="backHbox" layoutX="352.0" layoutY="185.0" prefHeight="658.0" prefWidth="920.0" style="-fx-background-color: #A5A5A5;">
+      <ScrollPane fitToWidth="true" layoutX="31.0" layoutY="19.0" prefHeight="620.0" prefWidth="858.0">
+         <VBox fx:id="hboxInsideInboxes" style="-fx-background-color: #A5A5A5;" />
+      </ScrollPane>
+   </AnchorPane>
+   <Button fx:id="write" layoutX="995.0" layoutY="133.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="83.0" text="Write">
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
+      <effect>
+         <DropShadow />
+      </effect>
+      <graphic>
+         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@images/add.png" />
+         </ImageView>
+      </graphic>
+   </Button>
+   <Text fx:id="emailOfAuthUser" layoutX="1110.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="email" textAlignment="CENTER" wrappingWidth="181.0">
+      <font>
+         <Font name="System Bold" size="14.0" />
+      </font>
+   </Text>
+   <AnchorPane fx:id="anc" layoutX="37.0" layoutY="185.0" prefHeight="181.0" prefWidth="269.0" style="-fx-background-color: #B1B1B1;">
+      <VBox alignment="TOP_CENTER" layoutX="14.0" layoutY="3.0" prefHeight="173.0" prefWidth="263.0" stylesheets="@static/buttonOnMenu.css">
+         <Button fx:id="inboxes" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="29.0" prefWidth="270.0" text="   Inboxes" textFill="#584747">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+            <graphic>
+               <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                  <Image url="@images/inboxes.png" />
+               </ImageView>
+            </graphic>
+         </Button>
+         <Button fx:id="sent" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="29.0" prefWidth="270.0" text="    Sent" textFill="#584747">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+            <graphic>
+               <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                  <Image url="@images/sent.png" />
+               </ImageView>
+            </graphic>
+         </Button>
+         <Button fx:id="spam" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="29.0" prefWidth="270.0" text="   Spam" textFill="#584747">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+            <graphic>
+               <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                  <Image url="@images/spam-mail.png" />
+               </ImageView>
+            </graphic>
+         </Button>
+         <Button fx:id="garbage" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="29.0" prefWidth="270.0" text="  Garbage" textFill="#584747">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+            <graphic>
+               <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                  <Image url="@images/rubbish-bin.png" />
+               </ImageView>
+            </graphic>
+         </Button>
+      </VBox>
+   </AnchorPane>
+   <AnchorPane layoutX="282.0" layoutY="126.0" prefHeight="32.0" prefWidth="239.0" />
+   <Button fx:id="exit" layoutX="1183.0" layoutY="132.0" mnemonicParsing="false" onAction="#exit" text="Exit">
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
+   </Button>
+   <ImageView fitHeight="69.0" fitWidth="74.0" layoutX="1166.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@images/user.png" />
+   </ImageView>
+   <ImageView fx:id="editProfile" fitHeight="19.0" fitWidth="18.0" layoutX="1241.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
+      <Image url="@images/edit-text.png" />
+   </ImageView>
+   <ImageView fitHeight="140.0" fitWidth="208.0" layoutX="59.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@images/email.png" />
+   </ImageView>
+   <Button fx:id="spambutton" layoutX="623.0" layoutY="152.0" mnemonicParsing="false" onAction="#spam" prefHeight="31.0" prefWidth="35.0" style="-fx-background-color: #D9D9D9;" stylesheets="@static/email.css" textFill="#461f8d" visible="false">
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
+      <graphic>
+         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@images/spam.png" />
+         </ImageView>
+      </graphic>
+   </Button>
+   <Button fx:id="deleteButton" layoutX="582.0" layoutY="152.0" mnemonicParsing="false" onAction="#delete" prefHeight="27.0" prefWidth="35.0" style="-fx-background-color: #D9D9D9;" stylesheets="@static/email.css" textFill="#3e25a4" visible="false">
+      <font>
+         <Font size="15.0" />
+      </font>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
+      <graphic>
+         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@images/delete.png" />
+         </ImageView>
+      </graphic>
+   </Button>
+   <DatePicker layoutX="765.0" layoutY="159.0" style="-fx-background-color: #B1B1B1;" />
+   <AnchorPane layoutX="295.0" layoutY="92.0" prefHeight="58.0" prefWidth="251.0">
+      <children>
+         <TextField fx:id="search" layoutX="55.0" layoutY="58.0" minWidth="209.0" prefHeight="35.0" prefWidth="215.0" promptText="Search" style="-fx-background-color: #645A5A;" />
+         <ImageView fx:id="searchButton" fitHeight="34.0" fitWidth="35.0" layoutX="240.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+            <Image url="@images/search.png" />
+         </ImageView>
+      </children>
+   </AnchorPane>
+   <TitledPane fx:id="notes" expanded="false" layoutX="38.0" layoutY="381.0" prefHeight="439.0" prefWidth="277.0" text="Personal Data">
+      <font>
+         <Font name="System Bold" size="12.0" />
+      </font>
+      <content>
+         <VBox prefHeight="200.0" prefWidth="100.0">
+            <children>
+               <TitledPane expanded="false" text="Notes">
+                 <content>
+                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                 </content>
+                  <graphic>
+                     <Button minHeight="12.0" minWidth="12.0" mnemonicParsing="false" prefHeight="12.0" prefWidth="12.0">
+                        <graphic>
+                           <ImageView fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@images/add_pd.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                     </Button>
+                  </graphic>
+               </TitledPane>
+               <TitledPane expanded="false" text="Saved files">
+                 <content>
+                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                 </content>
+                  <graphic>
+                     <Button minHeight="12.0" minWidth="12.0" mnemonicParsing="false" prefHeight="12.0" prefWidth="12.0">
+                        <graphic>
+                           <ImageView fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@images/add_pd.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                     </Button>
+                  </graphic>
+               </TitledPane>
+            </children>
+         </VBox>
+      </content>
+   </TitledPane>
+</AnchorPane>
