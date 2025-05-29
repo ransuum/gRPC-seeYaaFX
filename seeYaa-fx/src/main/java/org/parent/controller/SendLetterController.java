@@ -95,7 +95,7 @@ public class SendLetterController {
                         .build());
 
                 for (File file : selectedFiles) {
-                    MultipartFile multipartFile = new PathMultipartFile(file);
+                    final MultipartFile multipartFile = new PathMultipartFile(file);
                     storageService.uploadFile(UploadFileRequest.newBuilder()
                             .setLetterId(savedLetter.getId())
                             .setData(ByteString.copyFrom(multipartFile.getBytes()))

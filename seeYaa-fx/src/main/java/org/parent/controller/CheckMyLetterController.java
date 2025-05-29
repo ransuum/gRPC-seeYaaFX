@@ -3,7 +3,6 @@ package org.parent.controller;
 import com.seeYaa.proto.email.Answer;
 import com.seeYaa.proto.email.Files;
 import com.seeYaa.proto.email.Letter;
-import com.seeYaa.proto.email.MovedLetter;
 import com.seeYaa.proto.email.service.storage.LetterIdRequest;
 import com.seeYaa.proto.email.service.storage.FileMetadata;
 import com.seeYaa.proto.email.service.storage.StorageServiceGrpc;

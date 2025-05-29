@@ -27,27 +27,29 @@ public class MovedLetterConfigurationImpl extends MovedLetterConfigurationGrpc.M
             final var user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new NotFoundException("User not found"));
 
-            final var movedLetterEntity = movedLetterRepository.findByLetterId(request.getLetterId()).map(movedLetter -> {
-                movedLetterRepository.delete(movedLetter);
-                letterRepository.updateActiveLetterById(request.getLetterId(), true);
-                return movedLetter;
-            }).orElseGet(() -> {
-                letterRepository.updateActiveLetterById(request.getLetterId(), false);
-                final var letter = letterRepository.findById(request.getLetterId())
-                        .orElseThrow(() -> new NotFoundException("Letter not found"));
+            final var movedLetterEntity = movedLetterRepository.findByLetterId(request.getLetterId())
+                    .map(movedLetter -> {
+                        movedLetterRepository.delete(movedLetter);
+                        letterRepository.updateActiveLetterById(request.getLetterId(), true);
+                        return movedLetter;
+                    }).orElseGet(() -> {
+                        letterRepository.updateActiveLetterById(request.getLetterId(), false);
+                        final var letter = letterRepository.findById(request.getLetterId())
+                                .orElseThrow(() -> new NotFoundException("Letter not found"));
 
-                final var movedLetterBuild = MovedLetter.builder()
-                        .letter(letter)
-                        .typeOfLetter(request.getType())
-                        .movedBy(user)
-                        .build();
-                return movedLetterRepository.save(movedLetterBuild);
-            });
+                        final var movedLetterBuild = MovedLetter.builder()
+                                .letter(letter)
+                                .typeOfLetter(request.getType())
+                                .movedBy(user)
+                                .build();
+                        return movedLetterRepository.save(movedLetterBuild);
+                    });
 
             log.info("Moved letter with id {} to {}", movedLetterEntity.getLetter().getId(), request.getType());
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
         } catch (Exception e) {
+            log.error("Error while setting letter: {}", e.getMessage());
             responseObserver.onError(
                     io.grpc.Status.INTERNAL
                             .withDescription("Unexpected server error ")

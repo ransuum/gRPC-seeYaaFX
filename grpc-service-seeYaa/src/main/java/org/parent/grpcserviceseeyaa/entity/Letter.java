@@ -39,7 +39,7 @@ public class Letter implements Serializable {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    private Boolean activeLetter;
+    private Boolean activeLetter = true;
 
     private LocalDateTime deleteTime;
 
