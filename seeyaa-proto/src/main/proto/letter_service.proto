@@ -38,8 +38,8 @@ message LetterList { repeated email.models.Letter letters = 1; }
 
 message LetterWithAnswers {
   string                           letterId  = 1;
-  repeated email.models.Answer     answers = 2;
-  repeated email.models.Answer     answers = 2;
+  repeated email.models.Answer     answers   = 2;
+  string                           text      = 3;
 }
 
 service LetterService {
@@ -47,7 +47,7 @@ service LetterService {
   rpc SetLetterToSpam       (LetterIdEmailRequest)   returns (google.protobuf.Empty);
   rpc SetLetterToGarbage    (LetterIdEmailRequest)   returns (google.protobuf.Empty);
 
-  rpc FindById              (LetterIdRequest)        returns (LetterWithAnswers);
+  rpc FindById              (LetterIdRequest)        returns (email.models.Letter);
   rpc FindAllSentByTopic    (TopicSearchRequestBy)   returns (LetterList);
   rpc FindAllInboxByTopic   (TopicSearchRequestTo)   returns (LetterList);
 

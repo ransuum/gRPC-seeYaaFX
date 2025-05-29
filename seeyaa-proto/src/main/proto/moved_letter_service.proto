@@ -9,11 +9,11 @@ option java_package        = "com.seeYaa.proto.email.service.movedletter";
 option java_outer_classname = "MovedLetterServiceProto";
 
 message EmailRequest { string email = 1; }
-message MovedLetterList { repeated email.models.MovedLetter letters = 1; }
+message LetterList { repeated email.models.Letter letters = 1; }
 
 service MovedLetterService {
-  rpc GetSpamLetters    (EmailRequest) returns (MovedLetterList);
-  rpc GetGarbageLetters (EmailRequest) returns (MovedLetterList);
-  rpc GetSentLetters (EmailRequest) returns (MovedLetterList);
-  rpc GetInboxLetters (EmailRequest) returns (MovedLetterList);
+  rpc GetSpamLetters    (EmailRequest) returns (LetterList);
+  rpc GetGarbageLetters (EmailRequest) returns (LetterList);
+  rpc GetSentLetters    (EmailRequest) returns (LetterList);
+  rpc GetInboxLetters   (EmailRequest) returns (LetterList);
 }

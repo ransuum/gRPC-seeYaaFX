@@ -3,13 +3,7 @@ package org.parent.grpcserviceseeyaa.service;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
 import com.seeYaa.proto.email.Files;
-import com.seeyaa.proto.email.service.storage.DownloadFileResponse;
-import com.seeyaa.proto.email.service.storage.FileIdRequest;
-import com.seeyaa.proto.email.service.storage.FileMetadataList;
-import com.seeyaa.proto.email.service.storage.FilesList;
-import com.seeyaa.proto.email.service.storage.LetterIdRequest;
-import com.seeyaa.proto.email.service.storage.StorageServiceGrpc;
-import com.seeyaa.proto.email.service.storage.UploadFileRequest;
+import com.seeYaa.proto.email.service.storage.*;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
@@ -20,12 +14,11 @@ import org.parent.grpcserviceseeyaa.mapper.FilesMapper;
 import org.parent.grpcserviceseeyaa.repository.FilesRepository;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.springframework.grpc.server.service.GrpcService;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 
 @GrpcService
 @RequiredArgsConstructor
 @Slf4j
-@PreAuthorize("hasRole('ROLE_USER')")
 public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     private final FilesRepository filesRepository;
     private final LetterRepository letterRepository;
@@ -47,17 +40,19 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
 
             responseObserver.onNext(com.google.protobuf.Empty.getDefaultInstance());
             responseObserver.onCompleted();
-        } catch (StatusRuntimeException sre) {
-            responseObserver.onError(sre);
         } catch (Exception ex) {
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("Failed to upload file")
-                    .withCause(ex)
-                    .asRuntimeException());
+            log.error("Error uploading file", ex);
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription(ex.getMessage())
+                            .withCause(ex)
+                            .asRuntimeException()
+            );;
         }
     }
 
     @Override
+    @Transactional
     public void downloadFile(FileIdRequest request, StreamObserver<DownloadFileResponse> responseObserver) {
         try {
             org.parent.grpcserviceseeyaa.entity.Files file = filesRepository.findById(request.getFileId())
@@ -83,6 +78,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     }
 
     @Override
+    @Transactional
     public void getFilesByLetterId(LetterIdRequest request, StreamObserver<FilesList> responseObserver) {
         final var allByLetterId = filesRepository.findAllByLetterId(request.getLetterId())
                 .stream()
@@ -94,6 +90,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     }
 
     @Override
+    @Transactional
     public void getFileMetadataByLetterId(LetterIdRequest request, StreamObserver<FileMetadataList> responseObserver) {
         final var rows = filesRepository.findAllByLetterId(request.getLetterId())
                 .stream()
@@ -107,6 +104,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     }
 
     @Override
+    @Transactional
     public void getFileById(FileIdRequest request, StreamObserver<Files> responseObserver) {
         try {
             final var entity = filesRepository.findById(request.getFileId())

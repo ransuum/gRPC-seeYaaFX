@@ -13,14 +13,13 @@ import org.parent.grpcserviceseeyaa.mapper.UserMapper;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
 import org.parent.grpcserviceseeyaa.security.SecurityService;
 import org.springframework.grpc.server.service.GrpcService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.parent.grpcserviceseeyaa.util.fieldvalidation.FieldUtil.isValid;
 
 @GrpcService
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ROLE_USER')")
 public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -28,12 +27,12 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
 
     @Override
     public void signUp(SignUpRequest request, StreamObserver<Empty> responseObserver) {
-        final var savedUser = org.parent.grpcserviceseeyaa.entity.Users.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .firstname(request.getFirstname())
-                .lastname(request.getLastname())
-                .username(request.getUsername())
+        final var savedUser = org.parent.grpcserviceseeyaa.entity.Users.newBuilder()
+                .setEmail(request.getEmail())
+                .setPassword(passwordEncoder.encode(request.getPassword()))
+                .setFirstname(request.getFirstname())
+                .setLastname(request.getLastname())
+                .setUsername(request.getUsername())
                 .build();
 
         userRepository.save(savedUser);
@@ -43,6 +42,7 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void getCurrentUser(Empty request, StreamObserver<Users> responseObserver) {
         final var user = userRepository.findByEmail(securityService.getCurrentUserEmail())
                 .orElseThrow(() -> Status.NOT_FOUND
@@ -54,6 +54,7 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void getCurrentUserExtended(Empty request, StreamObserver<UserWithLetters> responseObserver) {
         final var user = userRepository.findByEmail(securityService.getCurrentUserEmail())
                 .orElseThrow(() -> Status.NOT_FOUND

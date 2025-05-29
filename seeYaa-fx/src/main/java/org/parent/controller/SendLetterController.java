@@ -1,5 +1,11 @@
 package org.parent.controller;
 
+import com.google.protobuf.ByteString;
+import com.seeYaa.proto.email.FileType;
+import com.seeYaa.proto.email.service.letter.LetterRequest;
+import com.seeYaa.proto.email.service.letter.LetterServiceGrpc;
+import com.seeYaa.proto.email.service.storage.StorageServiceGrpc;
+import com.seeYaa.proto.email.service.storage.UploadFileRequest;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -12,22 +18,18 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.practice.seeyaa.configuration.fileconfiguration.PathMultipartFile;
-import org.practice.seeyaa.enums.FileSize;
-import org.practice.seeyaa.models.request.LetterRequestDto;
-import org.practice.seeyaa.security.SecurityService;
-import org.practice.seeyaa.service.LetterService;
-import org.practice.seeyaa.service.StorageService;
-import org.practice.seeyaa.service.impl.StorageServiceImpl;
+import org.parent.configuration.file.PathMultipartFile;
+import org.parent.configuration.file.size.FileSize;
+import org.parent.grpcserviceseeyaa.security.SecurityService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.practice.seeyaa.util.AlertWindow.showAlert;
-
+import static org.parent.util.AlertWindow.showAlert;
 
 @Component
 public class SendLetterController {
@@ -46,15 +48,17 @@ public class SendLetterController {
     @FXML
     private Label attachmentLabel;
 
-    private final LetterService letterService;
-    private final StorageService storageService;
+    private final LetterServiceGrpc.LetterServiceBlockingStub letterService;
+    private final StorageServiceGrpc.StorageServiceBlockingStub storageService;
     private final SecurityService securityService;
 
     private Stage stage;
 
     private final List<File> selectedFiles = new ArrayList<>();
 
-    public SendLetterController(LetterService letterService, StorageServiceImpl storageService, SecurityService securityService) {
+    public SendLetterController(LetterServiceGrpc.LetterServiceBlockingStub letterService,
+                                StorageServiceGrpc.StorageServiceBlockingStub storageService,
+                                SecurityService securityService) {
         this.letterService = letterService;
         this.storageService = storageService;
         this.securityService = securityService;
@@ -82,17 +86,22 @@ public class SendLetterController {
 
         Task<Void> uploadTask = new Task<>() {
             @Override
-            protected Void call() {
-                LetterRequestDto request = new LetterRequestDto(
-                        text.getText(),
-                        topic.getText(),
-                        toWhom.getText(),
-                        securityService.getCurrentUserEmail());
-                final var savedLetter = letterService.sendLetter(request);
+            protected Void call() throws IOException {
+                final var savedLetter = letterService.sendLetter(LetterRequest.newBuilder()
+                        .setText(text.getText())
+                        .setTopic(topic.getText())
+                        .setUserToEmail(toWhom.getText())
+                        .setUserByEmail(securityService.getCurrentUserEmail())
+                        .build());
 
                 for (File file : selectedFiles) {
                     MultipartFile multipartFile = new PathMultipartFile(file);
-                    storageService.uploadFile(multipartFile, savedLetter);
+                    storageService.uploadFile(UploadFileRequest.newBuilder()
+                            .setLetterId(savedLetter.getId())
+                            .setData(ByteString.copyFrom(multipartFile.getBytes()))
+                            .setType(FileType.UNKNOWN)
+                            .setName(file.getName())
+                            .build());
                 }
                 return null;
             }

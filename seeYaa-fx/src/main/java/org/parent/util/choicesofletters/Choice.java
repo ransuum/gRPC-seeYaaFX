@@ -8,7 +8,7 @@ import com.seeYaa.proto.email.TypeOfLetter;
 import java.util.List;
 
 public interface Choice {
-    List<MovedLetter> addToBox(int index, String email);
+    List<Letter> addToBox(int index, String email);
 
     TypeOfLetter getChoice();
 }

@@ -1,6 +1,7 @@
 package org.parent.ui;
 
 import com.seeYaa.proto.email.Letter;
+import com.seeYaa.proto.email.MovedLetter;
 import javafx.scene.Cursor;
 import javafx.scene.control.TextField;
 import lombok.AccessLevel;

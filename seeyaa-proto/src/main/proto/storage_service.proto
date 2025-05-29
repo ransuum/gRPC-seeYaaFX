@@ -6,7 +6,7 @@ import "google/protobuf/empty.proto";
 import "models.proto";
 
 option java_multiple_files  = true;
-option java_package         = "com.seeyaa.proto.email.service.storage";
+option java_package         = "com.seeYaa.proto.email.service.storage";
 option java_outer_classname = "StorageServiceProto";
 
 message UploadFileRequest {

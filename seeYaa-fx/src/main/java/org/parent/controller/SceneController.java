@@ -1,6 +1,5 @@
 package org.parent.controller;
 
-import jakarta.validation.ValidationException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,14 +12,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.practice.seeyaa.exception.ActionException;
-import org.practice.seeyaa.security.SecurityService;
-import org.practice.seeyaa.validator.errorvalidator.AuthorizationValidator;
+import org.parent.grpcserviceseeyaa.security.SecurityService;
+import org.parent.util.AlertWindow;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -55,7 +52,7 @@ public class SceneController {
             try {
                 signUp();
             } catch (IOException e) {
-                throw new ActionException(e);
+                AlertWindow.showAlert("Can't sign up", e.getMessage());
             }
         });
     }
@@ -81,14 +78,8 @@ public class SceneController {
             stage.widthProperty().addListener((obs, oldVal, newVal) -> stage.centerOnScreen());
             stage.heightProperty().addListener((obs, oldVal, newVal) -> stage.centerOnScreen());
             stage.show();
-        } catch (ValidationException e) {
-            final AuthorizationValidator check = new AuthorizationValidator(incorrectInputEmail, incorrectInputPassword);
-            check.checkFieldsLogin(e);
-            incorrectInputPassword = check.getIncorrectInputPassword();
-            incorrectInputEmail = check.getIncorrectInputEmail();
-        } catch (AuthenticationException e) {
-            incorrectInputPassword.setText("Wrong password or email");
-            incorrectInputPassword.setVisible(true);
+        } catch (Exception e) {
+            AlertWindow.showAlert("Can't sign up", e.getMessage());
         }
 
     }

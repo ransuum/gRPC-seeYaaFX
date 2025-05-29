@@ -1,7 +1,12 @@
 package org.parent.controller;
 
-import com.seeYaa.proto.email.service.download.FileDownloadServiceGrpc;
-import com.seeYaa.proto.email.service.letter.LetterWithAnswers;
+import com.seeYaa.proto.email.Answer;
+import com.seeYaa.proto.email.Files;
+import com.seeYaa.proto.email.Letter;
+import com.seeYaa.proto.email.MovedLetter;
+import com.seeYaa.proto.email.service.storage.LetterIdRequest;
+import com.seeYaa.proto.email.service.storage.FileMetadata;
+import com.seeYaa.proto.email.service.storage.StorageServiceGrpc;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -18,13 +23,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.parent.grpcserviceseeyaa.entity.Answer;
+import org.parent.service.FileDownloadService;
+import org.parent.ui.AnswerRowFactory;
 import org.parent.ui.FileRowFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,8 +40,9 @@ import static org.parent.util.AlertWindow.showAlert;
 public class CheckMyLetterController {
     @FXML
     private Label email;
-    @FXML
-    private LetterWithAnswers letterDto;
+
+    private Letter letterDto;
+
     @FXML
     private Label firstNameLast;
     @FXML
@@ -53,17 +59,15 @@ public class CheckMyLetterController {
     private Stage stage;
 
     private final ConfigurableApplicationContext springContext;
-    private final FileRowFactory fileRowFactory;
-    private final FileDownloadServiceGrpc.FileDownloadServiceBlockingStub fileDownloadService;
-    private final com.seeyaa.proto.email.service.storage.StorageServiceGrpc.StorageServiceBlockingStub storageService;
+    private final StorageServiceGrpc.StorageServiceBlockingStub storageService;
     private final AIController aiController;
+    private final FileDownloadService fileDownloadService;
 
-    public CheckMyLetterController(ConfigurableApplicationContext springContext, com.seeyaa.proto.email.service.storage.StorageServiceGrpc.StorageServiceBlockingStub storageService,
-                                   AIController aiController, FileRowFactory fileRowFactory, FileDownloadServiceGrpc. fileDownloadService) {
+    public CheckMyLetterController(ConfigurableApplicationContext springContext, StorageServiceGrpc.StorageServiceBlockingStub storageService,
+                                   AIController aiController, FileDownloadService fileDownloadService) {
         this.springContext = springContext;
         this.storageService = storageService;
         this.aiController = aiController;
-        this.fileRowFactory = fileRowFactory;
         this.fileDownloadService = fileDownloadService;
     }
 
@@ -80,12 +84,12 @@ public class CheckMyLetterController {
 
             final var prompt = String.format("""
                     Please analyze this letter and provide insights on language that wrote:
-
+                    
                     Topic: %s
-
+                    
                     Content:
                     %s
-
+                    
                     Please provide:
                     1. A summary of the main points
                     2. The key message or request
@@ -96,7 +100,7 @@ public class CheckMyLetterController {
 
             final var aiStage = new Stage();
             final var scene = new Scene(root);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/checkLetter.css")).toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/checkMyLetter.css")).toExternalForm());
             aiStage.setScene(scene);
             aiStage.setTitle("AI Analysis");
             aiStage.initModality(Modality.APPLICATION_MODAL);
@@ -112,13 +116,13 @@ public class CheckMyLetterController {
         answerOnLetter();
     }
 
-    public void setLetter(LetterWithAnswers letter1, int function) {
+    public void setLetter(Letter letter1, int function) {
         this.letterDto = letter1;
-        setLetterContent(letter1.(), letter1.text(),
-                (function == 1) ? letter1.userBy().email()
-                        : letter1.userTo().email(),
-                (function == 1) ? letterDto.userBy().firstname() + " " + letterDto.userBy().lastname()
-                        : letterDto.userTo().firstname() + " " + letterDto.userTo().lastname());
+        setLetterContent(letter1.getTopic(), letter1.getText(),
+                (function == 1) ? letter1.getUserBy().getEmail()
+                        : letter1.getUserTo().getEmail(),
+                (function == 1) ? letter1.getUserBy().getFirstname() + " " + letter1.getUserBy().getLastname()
+                        : letter1.getUserTo().getFirstname() + " " + letter1.getUserTo().getLastname());
 
         loadAnswers();
 
@@ -137,9 +141,7 @@ public class CheckMyLetterController {
         answers.setSpacing(10);
         answers.setPadding(new Insets(10));
 
-        final List<Answer> sorted = letterDto.getAnswersList().stream()
-                .sorted(Comparator.comparing(com.seeYaa.proto.email.Answer::createdAt).reversed())
-                .toList();
+        final List<Answer> sorted = letterDto.getAnswersList();
 
         for (var answer : sorted) {
             var answerRow = AnswerRowFactory.createAnswerRow(answer, textOfLetter::setText);
@@ -154,10 +156,13 @@ public class CheckMyLetterController {
         final var loader = new HBox(10, progress, loadingLabel);
         filesContainer.getChildren().add(loader);
 
-        Task<List<FileMetadataDto>> task = new Task<>() {
+        Task<List<FileMetadata>> task = new Task<>() {
             @Override
-            protected List<FileMetadataDto> call() {
-                return storageService.getFileMetadataByLetterId(letterDto.id());
+            protected List<FileMetadata> call() {
+                return storageService.getFileMetadataByLetterId(LetterIdRequest.newBuilder()
+                                .setLetterId(letterDto.getId())
+                                .build())
+                        .getMetadataList();
             }
         };
 
@@ -167,14 +172,14 @@ public class CheckMyLetterController {
         new Thread(task).start();
     }
 
-    private void showFiles(List<FileMetadataDto> files) {
+    private void showFiles(List<FileMetadata> files) {
         filesContainer.getChildren().clear();
         final var filesBox = new VBox(10);
         filesBox.setPadding(new Insets(10));
         filesBox.getStyleClass().add("files-container");
 
-        for (FileMetadataDto meta : files) {
-            final var fileRow = fileRowFactory.createFileRow(
+        for (FileMetadata meta : files) {
+            final var fileRow = FileRowFactory.createFileRow(
                     meta,
                     this::fileDownload,
                     () -> stage
@@ -194,14 +199,16 @@ public class CheckMyLetterController {
         filesContainer.getChildren().setAll(filesView);
     }
 
-    private void fileDownload(FileMetadataDto meta) {
-        Task<Files> loadTask = fileDownloadService.createFileLoadTask(meta.id());
+    private void fileDownload(FileMetadata meta) {
+        Task<Files> loadTask = fileDownloadService.createFileLoadTask(meta.getId());
         loadTask.setOnSucceeded(e -> {
             final Files completeFile = loadTask.getValue();
             Task<Void> downloadTask = fileDownloadService.createDownloadTask(
                     completeFile, stage,
-                    () -> {},
-                    ex -> {}
+                    () -> {
+                    },
+                    ex -> {
+                    }
             );
             new Thread(downloadTask).start();
         });
@@ -215,7 +222,7 @@ public class CheckMyLetterController {
         Parent root = fxmlLoader.load();
 
         final AnswerController controller = fxmlLoader.getController();
-        controller.setIdOfLetter(letterDto.id());
+        controller.setIdOfLetter(letterDto.getId());
         controller.setEmailBy(currentEmail);
 
         stage = new Stage();

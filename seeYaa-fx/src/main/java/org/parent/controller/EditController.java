@@ -1,5 +1,7 @@
 package org.parent.controller;
 
+import com.seeYaa.proto.email.service.users.EditProfileRequest;
+import com.seeYaa.proto.email.service.users.UsersServiceGrpc;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
@@ -14,8 +16,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import lombok.Getter;
-import org.practice.seeyaa.models.request.EditRequestDto;
-import org.practice.seeyaa.service.UsersService;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -49,11 +49,11 @@ public class EditController {
     @FXML
     private CheckBox usernameCheck;
 
-    public EditController(UsersService usersService) {
-        this.usersService = usersService;
-    }
+    private final UsersServiceGrpc.UsersServiceBlockingStub blockingStub;
 
-    private final UsersService usersService;
+    public EditController(UsersServiceGrpc.UsersServiceBlockingStub blockingStub) {
+        this.blockingStub = blockingStub;
+    }
 
     @FXML
     public void initialize() {
@@ -69,13 +69,13 @@ public class EditController {
         );
 
         fieldPairs.forEach(pair -> pair.getKey().setOnAction(e -> {
-                    boolean selected = pair.getKey().isSelected();
-                    FadeTransition fade = new FadeTransition(Duration.millis(300), pair.getValue());
-                    fade.setFromValue(selected ? 0.6 : 1);
-                    fade.setToValue(selected ? 1 : 0.6);
-                    fade.play();
-                    pair.getValue().setDisable(!selected);
-                }));
+            boolean selected = pair.getKey().isSelected();
+            FadeTransition fade = new FadeTransition(Duration.millis(300), pair.getValue());
+            fade.setFromValue(selected ? 0.6 : 1);
+            fade.setToValue(selected ? 1 : 0.6);
+            fade.play();
+            pair.getValue().setDisable(!selected);
+        }));
 
         password1Check.setOnAction(e -> {
             final boolean selected = password1Check.isSelected();
@@ -147,12 +147,12 @@ public class EditController {
             final String newUsername = usernameCheck.isSelected() ? username.getText() : null;
             final String newPassword = password1Check.isSelected() ? password1.getText().trim() : null;
 
-            usersService.editProfile(new EditRequestDto(
-                    newFirstname,
-                    newLastname,
-                    newUsername,
-                    newPassword
-            ));
+            blockingStub.editProfile(EditProfileRequest.newBuilder()
+                    .setFirstname(newFirstname)
+                    .setLastname(newLastname)
+                    .setUsername(newUsername)
+                    .setPassword(newPassword)
+                    .build());
         } catch (Exception e) {
             showError(e.getMessage());
         }

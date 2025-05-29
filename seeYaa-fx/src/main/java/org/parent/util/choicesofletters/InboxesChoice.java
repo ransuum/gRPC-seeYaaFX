@@ -1,5 +1,6 @@
 package org.parent.util.choicesofletters;
 
+import com.seeYaa.proto.email.Letter;
 import com.seeYaa.proto.email.MovedLetter;
 import com.seeYaa.proto.email.TypeOfLetter;
 import com.seeYaa.proto.email.service.movedletter.EmailRequest;
@@ -21,7 +22,7 @@ public class InboxesChoice implements Choice {
     @Override
     @PreAuthorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
-    public List<MovedLetter> addToBox(int index, String email) {
+    public List<Letter> addToBox(int index, String email) {
         return movedLetterService.getInboxLetters(EmailRequest.newBuilder().setEmail(email).build()).getLettersList();
     }
 

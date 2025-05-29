@@ -5,10 +5,12 @@ import com.seeYaa.proto.email.service.answer.CreateAnswerRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import lombok.Setter;
+import org.parent.util.AlertWindow;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -44,9 +46,10 @@ public class AnswerController {
 
     private void setInformation(){
         answerService.createAnswer(CreateAnswerRequest.newBuilder()
-                        .setText(textOfAnswer.getText())
-                        .setEmailBy(emailBy)
-                        .setLetterId(idOfLetter.getText())
+                .setText(textOfAnswer.getText())
+                .setEmailBy(emailBy)
+                .setLetterId(idOfLetter.getText())
                 .build());
+        AlertWindow.showAlert(Alert.AlertType.INFORMATION.name(), "Answer sent");
     }
 }

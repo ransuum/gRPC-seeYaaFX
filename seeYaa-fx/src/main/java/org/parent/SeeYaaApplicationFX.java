@@ -5,7 +5,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.parent.grpcserviceseeyaa.GrpcServiceSeeYaaApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -19,14 +18,14 @@ public class SeeYaaApplicationFX extends Application {
     @Override
     public void init() {
         SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
-        springContext = new SpringApplicationBuilder(GrpcServiceSeeYaaApplication.class).run();
+        springContext = new SpringApplicationBuilder(SpringSeeYaaGrpc.class).run();
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         springContext.publishEvent(new StageReadyEvent(stage));
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("controller/login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/parent/controller/login.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
         String css = Objects.requireNonNull(this.getClass().getResource("controller/static/login.css")).toExternalForm();
         Scene scene = new Scene(fxmlLoader.load());

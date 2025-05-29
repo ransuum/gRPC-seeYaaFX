@@ -1,8 +1,8 @@
 package org.parent.grpcserviceseeyaa.configuration.letter;
 
 import com.google.protobuf.Empty;
-import com.seeyaa.proto.email.configuration.movedletter.MovedLetterConfigurationGrpc;
-import com.seeyaa.proto.email.configuration.movedletter.SetLetterTypeRequest;
+import com.seeYaa.proto.email.configuration.movedletter.MovedLetterConfigurationGrpc;
+import com.seeYaa.proto.email.configuration.movedletter.SetLetterTypeRequest;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

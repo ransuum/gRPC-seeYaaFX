@@ -1,6 +1,5 @@
 package org.parent.grpcserviceseeyaa.entity;
 
-import com.google.protobuf.Timestamp;
 import com.seeYaa.proto.email.TypeOfLetter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,5 +33,5 @@ public class MovedLetter {
     @JoinColumn(name = "movedBy_id", referencedColumnName = "id")
     private Users movedBy;
 
-    private Timestamp willDeleteAt;
+    private LocalDateTime willDeleteAt;
 }

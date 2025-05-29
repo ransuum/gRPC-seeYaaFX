@@ -1,6 +1,5 @@
 package org.parent.grpcserviceseeyaa.entity;
 
-import com.google.protobuf.Timestamp;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,11 +37,11 @@ public class Letter implements Serializable {
     private String text;
 
     @Column(nullable = false)
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     private Boolean activeLetter;
 
-    private Timestamp deleteTime;
+    private LocalDateTime deleteTime;
 
     @OneToMany(mappedBy = "currentLetter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Answer> answers;

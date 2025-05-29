@@ -1,0 +1,286 @@
+.root {
+    -fx-background-color: #D9D9D9;
+}
+
+.button {
+    -fx-background-color: #B1B1B1;
+    -fx-transition: all 0.3s ease-out;
+}
+
+.button:hover {
+    -fx-background-color: #AC8888;
+    -fx-text-fill: #28032C;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
+}
+
+.button:pressed {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
+}
+
+#backgroundOpyions {
+    -fx-background-radius: 20px;
+    -fx-transition: all 0.4s ease;
+}
+
+.notes {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-padding: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease-out;
+}
+
+.titled-pane {
+    -fx-text-fill: #3F3131;
+    -fx-font-weight: bold;
+    -fx-font-family: "System Bold";
+    -fx-font-size: 14px;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #baa7d9;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
+    -fx-transition: all 0.3s ease-out;
+}
+
+.titled-pane > .title:hover {
+    -fx-background-color: derive(#baa7d9, 10%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 3);
+    -fx-translate-y: -1;
+}
+
+.titled-pane > .title > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.0em 0.25em 0.0em 0.0em; /* 0 3 0 0 */
+}
+
+.titled-pane > .title > .arrow-button > .arrow {
+    -fx-background-color: #3F3131;
+    -fx-background-insets: 1 0 -1 0, 0;
+    -fx-padding: 0.25em 0.3125em 0.25em 0.3125em; /* 3 3.75 3 3.75 */
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+    -fx-transition: all 0.3s ease-out;
+}
+
+.titled-pane:expanded > .title > .arrow-button > .arrow {
+    -fx-rotate: 180;
+}
+
+.titled-pane > *.content {
+    -fx-background-color: derive(#D9D9D9, 5%);
+    -fx-background-radius: 0 0 8px 8px;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0 0 8px 8px;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+.titled-pane .vbox {
+    -fx-spacing: 8;
+    -fx-padding: 8;
+}
+
+.titled-pane:expanded {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 3);
+}
+
+.titled-pane > .content {
+    -fx-transition: all 0.3s ease-out;
+}
+
+.titled-pane:focused > .title {
+    -fx-background-color: derive(#baa7d9, 15%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 3);
+}
+
+.titled-pane:hover > .title {
+    -fx-cursor: hand;
+}
+
+.titled-pane > .title > .text {
+    -fx-fill: #3F3131;
+    -fx-transition: all 0.2s ease-out;
+}
+
+.titled-pane > .title:hover > .text {
+    -fx-fill: derive(#3F3131, -20%);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+#backgroundOpyions:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 3);
+}
+
+#emailOfAuthUser {
+    -fx-text-fill: #8D5454;
+    -fx-transition: all 0.3s ease;
+}
+
+#emailOfAuthUser:hover {
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+#write {
+    -fx-background-radius: 20px;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-family: Inter;
+    -fx-font-size: 14;
+    -fx-transition: all 0.3s ease;
+}
+
+#write:hover {
+    -fx-background-color: #967878;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 12, 0, 0, 2);
+}
+
+#exit {
+    -fx-background-radius: 20px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-family: Inter;
+    -fx-font-size: 12;
+    -fx-transition: all 0.3s ease;
+}
+
+#exit:hover {
+    -fx-background-color: #8B6464;
+    -fx-rotate: 5;
+}
+
+#search {
+    -fx-font-family: "Kaisei Opti";
+    -fx-background-radius: 25px;
+    -fx-text-fill: white;
+    -fx-opacity: 0.49;
+    -fx-transition: all 0.3s ease;
+}
+
+#search:focused {
+    -fx-opacity: 0.8;
+    -fx-scale-x: 1.02;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 1);
+}
+
+#startChat {
+    -fx-background-radius: 12px;
+    -fx-font-family: Inter;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-transition: all 0.3s ease;
+}
+
+#speakWith {
+    -fx-background-color: #D9D9D9;
+    -fx-background-radius: 4px;
+    -fx-transition: all 0.3s ease;
+}
+
+#anc {
+    -fx-background-radius: 10px;
+}
+
+.button.selected {
+    -fx-background-color: #AC8888;
+    -fx-text-fill: #28032C;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
+}
+
+#backHbox {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-background-radius: 15px;
+    -fx-border-radius: 15px;
+    -fx-border-width: 0;
+    -fx-transition: all 0.4s ease;
+}
+
+.check-box {
+    -fx-background-color: #B7B7B7;
+    -fx-border-color: #B7B7B7;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-transition: all 0.2s ease;
+}
+
+.check-box:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.check-box .box {
+    -fx-background-color: #B7B7B7;
+    -fx-border-color: white;
+    -fx-border-radius: 3px;
+    -fx-transition: all 0.2s ease;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: black;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #B7B7B7;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
+}
+
+.text-field {
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+    -fx-border-width: 0;
+    -fx-background-radius: 5px;
+    -fx-transition: all 0.3s ease;
+}
+
+.text-field:hover {
+    -fx-background-color: rgba(172, 136, 136, 0.7);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 1);
+}
+
+.text-field:pressed {
+    -fx-background-color: rgba(172, 136, 136, 0.8);
+}
+
+.text-field:disabled {
+    -fx-background-color: rgba(142, 143, 139, 0.5);
+    -fx-opacity: 0.7;
+}
+
+#hboxInsideInboxes {
+    -fx-background-color: transparent;
+    -fx-spacing: 10px;
+    -fx-padding: 5px;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 0 1;
+}
+
+.scroll-pane > .scroll-bar:vertical > .thumb {
+    -fx-background-color: #8B6464;
+    -fx-background-radius: 5px;
+}
+
+.scroll-pane > .scroll-bar:vertical > .track {
+    -fx-background-color: transparent;
+}

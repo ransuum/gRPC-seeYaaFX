@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
+@Builder(builderMethodName = "newBuilder", setterPrefix = "set")
 @Table(name = "users")
 @Entity
 public class Users {

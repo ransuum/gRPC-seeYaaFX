@@ -1,5 +1,6 @@
 package org.parent.ui;
 
+import com.seeYaa.proto.email.service.storage.FileMetadata;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -8,18 +9,19 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.parent.util.triofunction.Trio;
-import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@Component
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileRowFactory {
 
-    public HBox createFileRow(
-            com.seeyaa.proto.email.service.storage.FileMetadata fileMetadata,
-            Consumer<com.seeyaa.proto.email.service.storage.FileMetadata> onDownloadClick,
+    public static HBox createFileRow(
+            FileMetadata fileMetadata,
+            Consumer<FileMetadata> onDownloadClick,
             Supplier<Stage> stageSupplier
     ) {
         final var fileRow = new HBox();
@@ -59,7 +61,7 @@ public class FileRowFactory {
         return fileRow;
     }
 
-    private Trio<HBox, Button, ProgressIndicator> createObjects() {
+    private static Trio<HBox, Button, ProgressIndicator> createObjects() {
         final var downloadButton = new Button("↓");
         downloadButton.getStyleClass().add("download-button");
 

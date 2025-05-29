@@ -1,5 +1,15 @@
 package org.parent.controller;
 
+import com.google.protobuf.Empty;
+import com.seeYaa.proto.email.Letter;
+import com.seeYaa.proto.email.TypeOfLetter;
+import com.seeYaa.proto.email.configuration.movedletter.MovedLetterConfigurationGrpc;
+import com.seeYaa.proto.email.configuration.movedletter.SetLetterTypeRequest;
+import com.seeYaa.proto.email.service.letter.LetterIdRequest;
+import com.seeYaa.proto.email.service.letter.LetterServiceGrpc;
+import com.seeYaa.proto.email.service.letter.TopicSearchRequestBy;
+import com.seeYaa.proto.email.service.letter.TopicSearchRequestTo;
+import com.seeYaa.proto.email.service.users.UsersServiceGrpc;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,23 +27,17 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
-import org.practice.seeyaa.configuration.movedletterconf.MovedLetterConfiguration;
-import org.practice.seeyaa.enums.TypeOfLetter;
-import org.practice.seeyaa.exception.ActionException;
-import org.practice.seeyaa.models.dto.LetterDto;
-import org.practice.seeyaa.security.SecurityService;
-import org.practice.seeyaa.service.LetterService;
-import org.practice.seeyaa.service.UsersService;
-import org.practice.seeyaa.util.choicesofletters.Choice;
+import org.parent.grpcserviceseeyaa.security.SecurityService;
+import org.parent.grpcserviceseeyaa.util.fieldvalidation.FieldUtil;
+import org.parent.ui.LetterUIFactory;
+import org.parent.util.AlertWindow;
+import org.parent.util.choicesofletters.Choice;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.practice.seeyaa.ui.LetterUIFactory.createTextField;
-import static org.practice.seeyaa.util.fieldvalidation.FieldUtil.refractorDate;
 
 @Component
 public class EmailController {
@@ -67,20 +71,21 @@ public class EmailController {
     private static final String SELECTED = "selected";
 
     private final ConfigurableApplicationContext springContext;
-    private final LetterService letterService;
-    private final UsersService usersService;
+    private final LetterServiceGrpc.LetterServiceBlockingStub letterService;
+    private final UsersServiceGrpc.UsersServiceBlockingStub usersService;
     private final Map<TypeOfLetter, Choice> typeOfLetterChoices;
     private final SecurityService securityService;
-    private final MovedLetterConfiguration letterMoveService;
+    private final MovedLetterConfigurationGrpc.MovedLetterConfigurationBlockingStub letterMoveService;
     private final Map<String, Stage> openStages;
 
     private Stage stage;
     private Scene scene;
     private Parent root;
 
-    public EmailController(ConfigurableApplicationContext springContext, LetterService letterService,
-                           UsersService usersService, List<Choice> choices,
-                           SecurityService securityService, MovedLetterConfiguration letterMoveService, Map<String, Stage> openStages) {
+    public EmailController(ConfigurableApplicationContext springContext, LetterServiceGrpc.LetterServiceBlockingStub letterService,
+                           UsersServiceGrpc.UsersServiceBlockingStub usersService, List<Choice> choices,
+                           SecurityService securityService, MovedLetterConfigurationGrpc.MovedLetterConfigurationBlockingStub letterMoveService,
+                           Map<String, Stage> openStages) {
         this.springContext = springContext;
         this.letterService = letterService;
         this.usersService = usersService;
@@ -132,11 +137,17 @@ public class EmailController {
             hboxInsideInboxes.getChildren().clear();
 
             if (inboxes.getStyleClass().contains(SELECTED))
-                letterService.findAllInboxByTopic(search.getText(), emailOfAuthUser.getText())
+                letterService.findAllInboxByTopic(TopicSearchRequestTo.newBuilder()
+                                .setTopic(search.getText())
+                                .setUserToEmail(emailOfAuthUser.getText())
+                                .build()).getLettersList()
                         .forEach(letter
                                 -> addLetterToUI(letter, 1));
             else if (sent.getStyleClass().contains(SELECTED))
-                letterService.findAllSentByTopic(search.getText(), emailOfAuthUser.getText())
+                letterService.findAllSentByTopic(TopicSearchRequestBy.newBuilder()
+                                .setTopic(search.getText())
+                                .setUserByEmail(emailOfAuthUser.getText())
+                                .build()).getLettersList()
                         .forEach(letter
                                 -> addLetterToUI(letter, 2));
 
@@ -157,7 +168,7 @@ public class EmailController {
             stage.setTitle("Send Letter");
             stage.show();
         } catch (IOException e) {
-            throw new ActionException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -167,13 +178,13 @@ public class EmailController {
             fxmlLoader.setControllerFactory(springContext::getBean);
             this.root = fxmlLoader.load();
 
-            final var byEmail = usersService.findByEmailWithoutLists();
+            final var byEmail = usersService.getCurrentUser(Empty.newBuilder().build());
 
             final EditController controller = fxmlLoader.getController();
-            controller.getEmail().setText(byEmail.email());
-            controller.getFirstname().setText(byEmail.firstname());
-            controller.getLastname().setText(byEmail.lastname());
-            controller.getUsername().setText(byEmail.username());
+            controller.getEmail().setText(byEmail.getEmail());
+            controller.getFirstname().setText(byEmail.getFirstname());
+            controller.getLastname().setText(byEmail.getLastname());
+            controller.getUsername().setText(byEmail.getUsername());
             stage = new Stage();
             scene = new Scene(this.root);
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/edit.css")).toExternalForm());
@@ -184,7 +195,7 @@ public class EmailController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
         } catch (IOException e) {
-            throw new ActionException(e);
+            AlertWindow.showAlert("Error", e.getMessage());
         }
     }
 
@@ -195,10 +206,7 @@ public class EmailController {
             button.getStyleClass().add(SELECTED);
 
             final var letters = typeOfLetterChoices.get(choice)
-                    .addToBox(index, emailOfAuthUser.getText())
-                    .stream()
-                    .sorted(Comparator.comparing(LetterDto::createdAt).reversed())
-                    .toList();
+                    .addToBox(index, emailOfAuthUser.getText());
 
             Optional.of(letters)
                     .filter(list -> !list.isEmpty())
@@ -209,14 +217,14 @@ public class EmailController {
         });
     }
 
-    public void addLetterToUI(LetterDto letter, int function) {
-        final var textField = createTextField(letter, function);
+    public void addLetterToUI(Letter letter, int function) {
+        final var textField = LetterUIFactory.createTextField(letter, function);
         textField.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/letters.css")).toExternalForm());
         final TextField textField1 = new TextField();
         textField1.setAlignment(Pos.CENTER);
         textField1.setEditable(false);
         textField1.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/date.css")).toExternalForm());
-        textField1.setText(refractorDate(letter.createdAt()));
+        textField1.setText(FieldUtil.refractorDate(letter.getCreatedAt()));
 
         final CheckBox checkBox = new CheckBox();
         checkBox.setOnAction(event -> {
@@ -230,10 +238,10 @@ public class EmailController {
         hBox.getChildren().addAll(checkBox, textField, textField1);
 
         textField.setOnMouseClicked(textFieldEvent -> {
-            if (!checkBox.isSelected()) handleTextFieldClick(letter.id(), function);
+            if (!checkBox.isSelected()) handleTextFieldClick(letter.getId(), function);
         });
 
-        hBox.setId(letter.id());
+        hBox.setId(letter.getId());
         hboxInsideInboxes.getChildren().add(hBox);
     }
 
@@ -269,9 +277,17 @@ public class EmailController {
         selectedBoxes.forEach(hBox -> {
             final String letterId = hBox.getId();
             switch (typeOfLetter) {
-                case SPAM -> letterMoveService.setLetterType(letterId, email, TypeOfLetter.SPAM);
-                case GARBAGE -> letterMoveService.setLetterType(letterId, email, TypeOfLetter.GARBAGE);
-                default -> letterService.deleteById(letterId);
+                case SPAM -> letterMoveService.setLetterType(SetLetterTypeRequest.newBuilder()
+                        .setEmail(email)
+                        .setLetterId(letterId)
+                        .setType(TypeOfLetter.SPAM)
+                        .build());
+                case GARBAGE -> letterMoveService.setLetterType(SetLetterTypeRequest.newBuilder()
+                        .setEmail(email)
+                        .setLetterId(letterId)
+                        .setType(TypeOfLetter.GARBAGE)
+                        .build());
+                default -> letterService.deleteLetterById(LetterIdRequest.newBuilder().setId(letterId).build());
             }
         });
 
@@ -293,7 +309,7 @@ public class EmailController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("checkLetter.fxml"));
             fxmlLoader.setControllerFactory(springContext::getBean);
             root = fxmlLoader.load();
-            final var letter1 = letterService.findById(letterId);
+            final var letter1 = letterService.findById(LetterIdRequest.newBuilder().setId(letterId).build());
             stage = new Stage();
             scene = new Scene(root);
             stage.setScene(scene);
@@ -309,7 +325,7 @@ public class EmailController {
             openStages.put(letterId, stage);
             stage.show();
         } catch (IOException e) {
-            throw new ActionException(e);
+            AlertWindow.showAlert("Error", e.getMessage());
         }
     }
 }

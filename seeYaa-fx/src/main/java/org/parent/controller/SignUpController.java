@@ -1,25 +1,30 @@
 package org.parent.controller;
 
+import com.seeYaa.proto.email.service.users.SignUpRequest;
+import com.seeYaa.proto.email.service.users.UsersServiceGrpc;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.practice.seeyaa.models.request.SignUpRequestDto;
-import org.practice.seeyaa.service.UsersService;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SignUpController {
-    @FXML private TextField email;
-    @FXML private TextField firstName;
-    @FXML private TextField lastName;
-    @FXML private TextField password;
-    @FXML private TextField username;
+    @FXML
+    private TextField email;
+    @FXML
+    private TextField firstName;
+    @FXML
+    private TextField lastName;
+    @FXML
+    private TextField password;
+    @FXML
+    private TextField username;
 
-    private final UsersService usersService;
+    private final UsersServiceGrpc.UsersServiceBlockingStub usersService;
 
-    public SignUpController(UsersService usersService) {
+    public SignUpController(UsersServiceGrpc.UsersServiceBlockingStub usersService) {
         this.usersService = usersService;
     }
 
@@ -30,10 +35,13 @@ public class SignUpController {
         stage.close();
     }
 
-    private void registry(){
-        usersService.save(new SignUpRequestDto(
-                email.getText(), username.getText(), password.getText(),
-                firstName.getText(), lastName.getText())
-        );
+    private void registry() {
+        usersService.signUp(SignUpRequest.newBuilder()
+                .setEmail(email.getText())
+                .setUsername(username.getText())
+                .setPassword(password.getText())
+                .setFirstname(firstName.getText())
+                .setLastname(lastName.getText())
+                .build());
     }
 }

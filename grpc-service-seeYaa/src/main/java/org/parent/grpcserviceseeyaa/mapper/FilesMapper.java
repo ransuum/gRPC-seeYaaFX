@@ -1,16 +1,25 @@
 package org.parent.grpcserviceseeyaa.mapper;
 
+import com.google.protobuf.ByteString;
 import com.seeYaa.proto.email.Files;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import com.seeYaa.proto.email.service.storage.FileMetadata;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(uses = {LetterMapper.class})
 public interface FilesMapper {
     FilesMapper INSTANCE = Mappers.getMapper(FilesMapper.class);
 
+    @Mapping(target = "data", qualifiedByName = "bytesToByteString")
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     Files toFilesProto(org.parent.grpcserviceseeyaa.entity.Files files);
 
-    @Mapping(target = "data", expression = "java(ByteString.copyFrom(src.getData()))")
-    com.seeyaa.proto.email.service.storage.FileMetadata toMetaProto(org.parent.grpcserviceseeyaa.entity.Files src);
+    @Mapping(target = "data", qualifiedByName = "bytesToByteString")
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+    FileMetadata toMetaProto(org.parent.grpcserviceseeyaa.entity.Files src);
+
+    @Named("bytesToByteString")
+    default ByteString bytesToByteString(byte[] data) {
+        return data == null ? ByteString.EMPTY : ByteString.copyFrom(data);
+    }
 }

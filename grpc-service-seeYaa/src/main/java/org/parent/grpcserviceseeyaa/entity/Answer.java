@@ -1,6 +1,5 @@
 package org.parent.grpcserviceseeyaa.entity;
 
-import com.google.protobuf.Timestamp;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,5 +32,5 @@ public class Answer {
     private Letter currentLetter;
 
     @Column(nullable = false)
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 }
