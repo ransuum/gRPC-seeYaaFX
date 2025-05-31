@@ -47,7 +47,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
                             .withDescription(ex.getMessage())
                             .withCause(ex)
                             .asRuntimeException()
-            );;
+            );
         }
     }
 

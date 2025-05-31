@@ -82,42 +82,42 @@ public class SendLetterController {
             scene.setCursor(Cursor.WAIT);
         });
 
-        Task<Void> uploadTask = new Task<>() {
-            @Override
-            protected Void call() throws IOException {
-                final var savedLetter = letterService.sendLetter(LetterRequest.newBuilder()
-                        .setText(text.getText())
-                        .setTopic(topic.getText())
-                        .setUserToEmail(toWhom.getText())
-                        .setUserByEmail(securityService.getCurrentUserEmail())
-                        .build());
-
-                for (File file : selectedFiles) {
-                    final MultipartFile multipartFile = new PathMultipartFile(file);
-                    storageService.uploadFile(UploadFileRequest.newBuilder()
-                            .setLetterId(savedLetter.getId())
-                            .setData(ByteString.copyFrom(multipartFile.getBytes()))
-                            .setType(FileType.UNKNOWN)
-                            .setName(file.getName())
+        try {
+            Task<Void> uploadTask = new Task<>() {
+                @Override
+                protected Void call() throws IOException {
+                    final var savedLetter = letterService.sendLetter(LetterRequest.newBuilder()
+                            .setText(text.getText())
+                            .setTopic(topic.getText())
+                            .setUserToEmail(toWhom.getText())
+                            .setUserByEmail(securityService.getCurrentUserEmail())
                             .build());
+
+                    for (File file : selectedFiles) {
+                        final MultipartFile multipartFile = new PathMultipartFile(file);
+                        storageService.uploadFile(UploadFileRequest.newBuilder()
+                                .setLetterId(savedLetter.getId())
+                                .setData(ByteString.copyFrom(multipartFile.getBytes()))
+                                .setType(FileType.UNKNOWN)
+                                .setName(file.getName())
+                                .build());
+                    }
+                    return null;
                 }
-                return null;
-            }
-        };
+            };
 
-        uploadTask.setOnSucceeded(e ->
-                Platform.runLater(() -> {
-                    stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    stage.close();
-                    scene.setCursor(Cursor.DEFAULT);
-                }));
-        uploadTask.setOnFailed(e -> {
+            uploadTask.setOnSucceeded(e ->
+                    Platform.runLater(() -> {
+                        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        stage.close();
+                        scene.setCursor(Cursor.DEFAULT);
+                    }));
+
+            new Thread(uploadTask).start();
+        } catch (Exception e) {
             Platform.runLater(() -> scene.setCursor(Cursor.DEFAULT));
-
-            AlertWindow.showAlert(Alert.AlertType.ERROR, "Upload or Send Failed", "Text is too big or file. Maybe user not found");
-        });
-
-        new Thread(uploadTask).start();
+            AlertWindow.showAlert(Alert.AlertType.ERROR, "Error while sending letter", e.getMessage());
+        }
     }
 
     private void attachFile() {

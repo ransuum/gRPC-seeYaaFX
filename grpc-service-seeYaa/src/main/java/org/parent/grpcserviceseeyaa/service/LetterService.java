@@ -35,7 +35,9 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
         grpcValidatorService.validateLetter(new LetterRequestDto(
                 request.getText(), request.getTopic(), request.getUserToEmail(), request.getUserByEmail()));
         final var usersBy = userRepository.findByEmail(request.getUserByEmail())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> Status.NOT_FOUND
+                        .withDescription("User (by) not found")
+                        .asRuntimeException());
         final var letter = userRepository.findByEmail(request.getUserToEmail())
                 .map(userTo -> letterRepository.save(
                         org.parent.grpcserviceseeyaa.entity.Letter.builder()
@@ -47,7 +49,9 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
                                 .createdAt(LocalDateTime.now())
                                 .deleteTime(LocalDateTime.now())
                                 .build())
-                ).orElseThrow(() -> new NotFoundException("User not found"));
+                ).orElseThrow(() -> Status.NOT_FOUND
+                        .withDescription("User (to) not found")
+                        .asRuntimeException());
 
         final var letterProto = LetterMapper.INSTANCE.toLetterProto(letter);
         responseObserver.onNext(letterProto);
@@ -55,7 +59,6 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     }
 
     @Override
-    @Transactional
     public void setLetterToSpam(LetterIdEmailRequest request, StreamObserver<Empty> responseObserver) {
         movedLetterConfiguration.setLetterType(SetLetterTypeRequest.newBuilder()
                 .setLetterId(request.getLetterId())
@@ -68,7 +71,6 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     }
 
     @Override
-    @Transactional
     public void setLetterToGarbage(LetterIdEmailRequest request, StreamObserver<Empty> responseObserver) {
         movedLetterConfiguration.setLetterType(SetLetterTypeRequest.newBuilder()
                 .setLetterId(request.getLetterId())
@@ -83,19 +85,13 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     @Override
     @Transactional(readOnly = true)
     public void findById(LetterIdRequest request, StreamObserver<Letter> responseObserver) {
-        try {
             final var letter = letterRepository.findById(request.getId())
-                    .orElseThrow(() -> new NotFoundException("No letter found with id: " + request.getId()));
+                    .orElseThrow(() -> Status.NOT_FOUND
+                            .withDescription("Letter not found")
+                            .asRuntimeException());
 
             responseObserver.onNext(LetterMapper.INSTANCE.toLetterProto(letter));
             responseObserver.onCompleted();
-        } catch (Exception e) {
-            responseObserver.onError(
-                    io.grpc.Status.INTERNAL
-                            .withDescription("Unexpected server error ")
-                            .withCause(e)
-                            .asRuntimeException());
-        }
 
     }
 

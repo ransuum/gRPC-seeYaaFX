@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.parent.grpcserviceseeyaa.configuration.validator.GrpcValidatorService;
 import org.parent.grpcserviceseeyaa.dto.AnswerRequestDto;
 import org.parent.grpcserviceseeyaa.entity.Answer;
-import org.parent.grpcserviceseeyaa.exception.NotFoundException;
 import org.parent.grpcserviceseeyaa.repository.AnswerRepository;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
@@ -29,10 +28,14 @@ public class AnswerService extends AnswerServiceGrpc.AnswerServiceImplBase {
     public void createAnswer(CreateAnswerRequest request, StreamObserver<Empty> responseObserver) {
         grpcValidatorService.validAnswer(new AnswerRequestDto(request.getText()));
         final var letter = letterRepo.findById(request.getLetterId())
-                .orElseThrow(() -> new NotFoundException("Letter not found"));
+                .orElseThrow(() -> Status.NOT_FOUND
+                        .withDescription("You are not logged in")
+                        .asRuntimeException());
 
         final var users = usersRepo.findByEmail(request.getEmailBy())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> Status.NOT_FOUND
+                        .withDescription("You are not logged in")
+                        .asRuntimeException());
 
         answerRepository.save(Answer.builder()
                 .answerText(request.getText())
