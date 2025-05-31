@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AlertWindow {
 
-    public static void showAlert(String title, String message) {
-        final Alert alert = new Alert(Alert.AlertType.ERROR);
+    public static void showAlert(Alert.AlertType alertType, String title, String message) {
+        final Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setContentText(message);
         alert.showAndWait();

@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import lombok.Getter;
+import org.parent.grpcserviceseeyaa.util.fieldvalidation.FieldUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -126,35 +127,31 @@ public class EditController {
 
     private boolean validateForm() {
         if (password1Check.isSelected() && !password1.getText().equals(password2.getText())) {
-            showError("Passwords do not match");
+            showError();
             return false;
         }
         return true;
     }
 
-    private void showError(String message) {
+    private void showError() {
         final Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText("Passwords do not match");
         alert.show();
     }
 
     private void updateUser() {
-        try {
-            final String newFirstname = firstnameCheck.isSelected() ? firstname.getText() : null;
-            final String newLastname = lastnameCheck.isSelected() ? lastname.getText() : null;
-            final String newUsername = usernameCheck.isSelected() ? username.getText() : null;
-            final String newPassword = password1Check.isSelected() ? password1.getText().trim() : null;
+        final String newFirstname = firstname.getText();
+        final String newLastname = lastname.getText();
+        final String newUsername = username.getText();
+        final String newPassword = FieldUtil.isValid(password1.getText()) ? password1.getText() : "N";
 
-            blockingStub.editProfile(EditProfileRequest.newBuilder()
-                    .setFirstname(newFirstname)
-                    .setLastname(newLastname)
-                    .setUsername(newUsername)
-                    .setPassword(newPassword)
-                    .build());
-        } catch (Exception e) {
-            showError(e.getMessage());
-        }
+        blockingStub.editProfile(EditProfileRequest.newBuilder()
+                .setFirstname(newFirstname)
+                .setLastname(newLastname)
+                .setUsername(newUsername)
+                .setPassword(newPassword)
+                .build());
     }
 }

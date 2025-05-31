@@ -10,6 +10,8 @@ import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.configuration.letter.MovedLetterConfigurationImpl;
+import org.parent.grpcserviceseeyaa.configuration.validator.GrpcValidatorService;
+import org.parent.grpcserviceseeyaa.dto.LetterRequestDto;
 import org.parent.grpcserviceseeyaa.exception.NotFoundException;
 import org.parent.grpcserviceseeyaa.mapper.LetterMapper;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
@@ -26,37 +28,30 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     private final MovedLetterConfigurationImpl movedLetterConfiguration;
     private final LetterRepository letterRepository;
     private final UserRepository userRepository;
+    private final GrpcValidatorService grpcValidatorService;
 
     @Override
     public void sendLetter(LetterRequest request, StreamObserver<Letter> responseObserver) {
-        try {
-            final var usersBy = userRepository.findByEmail(request.getUserByEmail())
-                    .orElseThrow(() -> new NotFoundException("User not found"));
-            final var letter = userRepository.findByEmail(request.getUserToEmail())
-                    .map(userTo -> letterRepository.save(
-                            org.parent.grpcserviceseeyaa.entity.Letter.builder()
-                                    .userBy(usersBy)
-                                    .userTo(userTo)
-                                    .text(request.getText())
-                                    .topic(request.getTopic())
-                                    .activeLetter(Boolean.TRUE)
-                                    .createdAt(LocalDateTime.now())
-                                    .deleteTime(LocalDateTime.now())
-                                    .build())
-                    ).orElseThrow(() -> new NotFoundException("User not found"));
+        grpcValidatorService.validateLetter(new LetterRequestDto(
+                request.getText(), request.getTopic(), request.getUserToEmail(), request.getUserByEmail()));
+        final var usersBy = userRepository.findByEmail(request.getUserByEmail())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        final var letter = userRepository.findByEmail(request.getUserToEmail())
+                .map(userTo -> letterRepository.save(
+                        org.parent.grpcserviceseeyaa.entity.Letter.builder()
+                                .userBy(usersBy)
+                                .userTo(userTo)
+                                .text(request.getText())
+                                .topic(request.getTopic())
+                                .activeLetter(Boolean.TRUE)
+                                .createdAt(LocalDateTime.now())
+                                .deleteTime(LocalDateTime.now())
+                                .build())
+                ).orElseThrow(() -> new NotFoundException("User not found"));
 
-            final var letterProto = LetterMapper.INSTANCE.toLetterProto(letter);
-            responseObserver.onNext(letterProto);
-            responseObserver.onCompleted();
-        } catch (Exception ex) {
-            log.error("Error sending letter", ex);
-            responseObserver.onError(
-                    Status.INTERNAL
-                            .withDescription(ex.getMessage())
-                            .withCause(ex)
-                            .asRuntimeException()
-            );
-        }
+        final var letterProto = LetterMapper.INSTANCE.toLetterProto(letter);
+        responseObserver.onNext(letterProto);
+        responseObserver.onCompleted();
     }
 
     @Override
@@ -108,8 +103,8 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     @Transactional(readOnly = true)
     public void findAllSentByTopic(TopicSearchRequestBy request, StreamObserver<LetterList> responseObserver) {
         final var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserBy(
-                request.getTopic(),
-                userRepository.findByEmail(request.getUserByEmail()).orElse(null))
+                        request.getTopic(),
+                        userRepository.findByEmail(request.getUserByEmail()).orElse(null))
                 .stream()
                 .map(LetterMapper.INSTANCE::toLetterProto)
                 .toList();

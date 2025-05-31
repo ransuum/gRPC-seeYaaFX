@@ -1,7 +1,6 @@
 package org.parent.util.choicesofletters;
 
 import com.seeYaa.proto.email.Letter;
-import com.seeYaa.proto.email.MovedLetter;
 import com.seeYaa.proto.email.TypeOfLetter;
 import com.seeYaa.proto.email.service.movedletter.EmailRequest;
 import com.seeYaa.proto.email.service.movedletter.MovedLetterServiceGrpc;

@@ -45,11 +45,15 @@ public class AnswerController {
     }
 
     private void setInformation(){
-        answerService.createAnswer(CreateAnswerRequest.newBuilder()
-                .setText(textOfAnswer.getText())
-                .setEmailBy(emailBy)
-                .setLetterId(idOfLetter.getText())
-                .build());
-        AlertWindow.showAlert(Alert.AlertType.INFORMATION.name(), "Answer sent");
+        try {
+            answerService.createAnswer(CreateAnswerRequest.newBuilder()
+                    .setText(textOfAnswer.getText())
+                    .setEmailBy(emailBy)
+                    .setLetterId(idOfLetter.getText())
+                    .build());
+            AlertWindow.showAlert(Alert.AlertType.CONFIRMATION, "Answer", "Sent successfully!");
+        } catch (Exception e) {
+            AlertWindow.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+        }
     }
 }

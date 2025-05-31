@@ -6,6 +6,8 @@ import com.seeYaa.proto.email.service.answer.CreateAnswerRequest;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
+import org.parent.grpcserviceseeyaa.configuration.validator.GrpcValidatorService;
+import org.parent.grpcserviceseeyaa.dto.AnswerRequestDto;
 import org.parent.grpcserviceseeyaa.entity.Answer;
 import org.parent.grpcserviceseeyaa.exception.NotFoundException;
 import org.parent.grpcserviceseeyaa.repository.AnswerRepository;
@@ -21,9 +23,11 @@ public class AnswerService extends AnswerServiceGrpc.AnswerServiceImplBase {
     private final AnswerRepository answerRepository;
     private final LetterRepository letterRepo;
     private final UserRepository usersRepo;
+    private final GrpcValidatorService grpcValidatorService;
 
     @Override
     public void createAnswer(CreateAnswerRequest request, StreamObserver<Empty> responseObserver) {
+        grpcValidatorService.validAnswer(new AnswerRequestDto(request.getText()));
         final var letter = letterRepo.findById(request.getLetterId())
                 .orElseThrow(() -> new NotFoundException("Letter not found"));
 

@@ -17,6 +17,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -168,7 +169,7 @@ public class EmailController {
             stage.setTitle("Send Letter");
             stage.show();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            AlertWindow.showAlert(Alert.AlertType.ERROR, "Writing letter", e.getMessage());
         }
     }
 
@@ -195,7 +196,7 @@ public class EmailController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
         } catch (IOException e) {
-            AlertWindow.showAlert("Error", e.getMessage());
+            AlertWindow.showAlert(Alert.AlertType.ERROR, "Edit Profile", e.getMessage());
         }
     }
 
@@ -265,35 +266,39 @@ public class EmailController {
     }
 
     private void processSelectedLetters(TypeOfLetter typeOfLetter) {
-        final List<HBox> selectedBoxes = new LinkedList<>();
-        hboxInsideInboxes.getChildren().forEach(node -> {
-            if (node instanceof HBox hBox) {
-                CheckBox checkBox = (CheckBox) hBox.getChildren().getFirst();
-                if (checkBox.isSelected()) selectedBoxes.add(hBox);
-            }
-        });
+        try {
+            final List<HBox> selectedBoxes = new LinkedList<>();
+            hboxInsideInboxes.getChildren().forEach(node -> {
+                if (node instanceof HBox hBox) {
+                    CheckBox checkBox = (CheckBox) hBox.getChildren().getFirst();
+                    if (checkBox.isSelected()) selectedBoxes.add(hBox);
+                }
+            });
 
-        final var email = emailOfAuthUser.getText();
-        selectedBoxes.forEach(hBox -> {
-            final String letterId = hBox.getId();
-            switch (typeOfLetter) {
-                case SPAM -> letterMoveService.setLetterType(SetLetterTypeRequest.newBuilder()
-                        .setEmail(email)
-                        .setLetterId(letterId)
-                        .setType(TypeOfLetter.SPAM)
-                        .build());
-                case GARBAGE -> letterMoveService.setLetterType(SetLetterTypeRequest.newBuilder()
-                        .setEmail(email)
-                        .setLetterId(letterId)
-                        .setType(TypeOfLetter.GARBAGE)
-                        .build());
-                default -> letterService.deleteLetterById(LetterIdRequest.newBuilder().setId(letterId).build());
-            }
-        });
+            final var email = emailOfAuthUser.getText();
+            selectedBoxes.forEach(hBox -> {
+                final String letterId = hBox.getId();
+                switch (typeOfLetter) {
+                    case SPAM -> letterMoveService.setLetterType(SetLetterTypeRequest.newBuilder()
+                            .setEmail(email)
+                            .setLetterId(letterId)
+                            .setType(TypeOfLetter.SPAM)
+                            .build());
+                    case GARBAGE -> letterMoveService.setLetterType(SetLetterTypeRequest.newBuilder()
+                            .setEmail(email)
+                            .setLetterId(letterId)
+                            .setType(TypeOfLetter.GARBAGE)
+                            .build());
+                    default -> letterService.deleteLetterById(LetterIdRequest.newBuilder().setId(letterId).build());
+                }
+            });
 
-        hboxInsideInboxes.getChildren().removeAll(selectedBoxes);
-        spambutton.setVisible(false);
-        deleteButton.setVisible(false);
+            hboxInsideInboxes.getChildren().removeAll(selectedBoxes);
+            spambutton.setVisible(false);
+            deleteButton.setVisible(false);
+        } catch (Exception e) {
+            AlertWindow.showAlert(Alert.AlertType.ERROR, "Change letter position", e.getMessage());
+        }
     }
 
     private void handleTextFieldClick(String letterId, int function) {
@@ -303,7 +308,6 @@ public class EmailController {
                 existingStage.requestFocus();
                 return;
             } else openStages.remove(letterId);
-
         }
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("checkLetter.fxml"));
@@ -325,7 +329,7 @@ public class EmailController {
             openStages.put(letterId, stage);
             stage.show();
         } catch (IOException e) {
-            AlertWindow.showAlert("Error", e.getMessage());
+            AlertWindow.showAlert(Alert.AlertType.ERROR, "Field", e.getMessage());
         }
     }
 }

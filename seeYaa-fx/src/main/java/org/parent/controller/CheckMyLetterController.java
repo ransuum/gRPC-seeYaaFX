@@ -106,7 +106,7 @@ public class CheckMyLetterController {
             aiStage.show();
         } catch (IOException e) {
             log.error("Error opening AI response window", e);
-            showAlert("Ai window didn't open", "Error opening AI response window: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Ai", "Error opening AI response window: " + e.getMessage());
         }
     }
 
@@ -166,7 +166,7 @@ public class CheckMyLetterController {
         };
 
         task.setOnSucceeded(evt -> Platform.runLater(() -> showFiles(task.getValue())));
-        task.setOnFailed(evt -> showAlert("Error",
+        task.setOnFailed(evt -> showAlert(Alert.AlertType.ERROR, "Loading data",
                 "Failed to load files metadata: " + task.getException().getMessage()));
         new Thread(task).start();
     }
@@ -204,14 +204,13 @@ public class CheckMyLetterController {
             final Files completeFile = loadTask.getValue();
             Task<Void> downloadTask = fileDownloadService.createDownloadTask(
                     completeFile, stage,
-                    () -> {
-                    },
-                    ex -> {
-                    }
+                    () -> {},
+                    ex -> {}
             );
             new Thread(downloadTask).start();
         });
-        loadTask.setOnFailed(e -> showAlert("File download error", loadTask.getException().getMessage()));
+        loadTask.setOnFailed(e ->
+                showAlert(Alert.AlertType.ERROR,"Filedownload", loadTask.getException().getMessage()));
         new Thread(loadTask).start();
     }
 

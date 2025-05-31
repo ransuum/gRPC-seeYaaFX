@@ -23,7 +23,6 @@ public class MovedLetterConfigurationImpl extends MovedLetterConfigurationGrpc.M
 
     @Override
     public void setLetterType(SetLetterTypeRequest request, StreamObserver<Empty> responseObserver) {
-        try {
             final var user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new NotFoundException("User not found"));
 
@@ -48,13 +47,5 @@ public class MovedLetterConfigurationImpl extends MovedLetterConfigurationGrpc.M
             log.info("Moved letter with id {} to {}", movedLetterEntity.getLetter().getId(), request.getType());
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
-        } catch (Exception e) {
-            log.error("Error while setting letter: {}", e.getMessage());
-            responseObserver.onError(
-                    io.grpc.Status.INTERNAL
-                            .withDescription("Unexpected server error ")
-                            .withCause(e)
-                            .asRuntimeException());
-        }
     }
 }

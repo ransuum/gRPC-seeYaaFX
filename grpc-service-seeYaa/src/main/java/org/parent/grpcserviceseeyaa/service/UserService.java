@@ -8,7 +8,12 @@ import com.seeYaa.proto.email.service.users.UserWithLetters;
 import com.seeYaa.proto.email.service.users.UsersServiceGrpc;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.parent.grpcserviceseeyaa.configuration.validator.GrpcValidatorService;
+import org.parent.grpcserviceseeyaa.dto.EditRequestDto;
+import org.parent.grpcserviceseeyaa.dto.SignUpRequestDto;
 import org.parent.grpcserviceseeyaa.mapper.UserMapper;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
 import org.parent.grpcserviceseeyaa.security.SecurityService;
@@ -16,17 +21,21 @@ import org.springframework.grpc.server.service.GrpcService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.parent.grpcserviceseeyaa.util.fieldvalidation.FieldUtil.isValid;
-
+@Slf4j
 @GrpcService
 @RequiredArgsConstructor
 public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final SecurityService securityService;
+    private final GrpcValidatorService grpcValidatorService;
 
     @Override
     public void signUp(SignUpRequest request, StreamObserver<Empty> responseObserver) {
+        try {
+        grpcValidatorService.validSignUp(new SignUpRequestDto(
+                request.getEmail(), request.getUsername(), request.getPassword(),
+                request.getFirstname(), request.getLastname()));
         final var savedUser = org.parent.grpcserviceseeyaa.entity.Users.newBuilder()
                 .setEmail(request.getEmail())
                 .setPassword(passwordEncoder.encode(request.getPassword()))
@@ -35,7 +44,21 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
                 .setUsername(request.getUsername())
                 .build();
 
-        userRepository.save(savedUser);
+            userRepository.save(savedUser);
+        } catch (ConstraintViolationException e) {
+            String msg = e.getConstraintViolations().stream()
+                    .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                    .reduce((a, b) -> a + "; " + b)
+                    .orElse(e.getMessage());
+
+            responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
+                    .withDescription(msg)
+                    .asRuntimeException());
+        } catch (Exception ex) {
+            responseObserver.onError(io.grpc.Status.INTERNAL
+                    .withDescription("Internal server error: " + ex.getMessage())
+                    .asRuntimeException());
+        }
 
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
@@ -67,15 +90,18 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
 
     @Override
     public void editProfile(EditProfileRequest request, StreamObserver<Empty> responseObserver) {
+        grpcValidatorService.validEditProfile(new EditRequestDto(
+                request.getFirstname(), request.getLastname(), request.getUsername(), request.getPassword()));
         final var users = userRepository.findByEmail(securityService.getCurrentUserEmail())
                 .orElseThrow(() -> Status.NOT_FOUND
                         .withDescription("You are not logged in")
                         .asRuntimeException());
 
-        if (isValid(request.getFirstname())) users.setFirstname(request.getFirstname());
-        if (isValid(request.getPassword())) users.setPassword(passwordEncoder.encode(request.getPassword()));
-        if (isValid(request.getLastname())) users.setLastname(request.getLastname());
-        if (isValid(request.getUsername())) users.setUsername(request.getUsername());
+        if (!request.getFirstname().equals(users.getFirstname())) users.setFirstname(request.getFirstname());
+        if (!request.getPassword().equals("N") && !passwordEncoder.matches(users.getPassword(), request.getPassword()))
+            users.setPassword(passwordEncoder.encode(request.getPassword()));
+        if (!request.getLastname().equals(users.getLastname())) users.setLastname(request.getLastname());
+        if (!request.getUsername().equals(users.getUsername())) users.setUsername(request.getUsername());
         userRepository.save(users);
 
         responseObserver.onNext(Empty.getDefaultInstance());

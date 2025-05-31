@@ -1,11 +1,9 @@
 package org.parent.util.choicesofletters;
 
 import com.seeYaa.proto.email.Letter;
-import com.seeYaa.proto.email.MovedLetter;
 import com.seeYaa.proto.email.TypeOfLetter;
 import com.seeYaa.proto.email.service.movedletter.EmailRequest;
 import com.seeYaa.proto.email.service.movedletter.MovedLetterServiceGrpc;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +14,7 @@ import java.util.List;
 public class SentChoice implements Choice {
     private final MovedLetterServiceGrpc.MovedLetterServiceBlockingStub movedLetterService;
 
-    public SentChoice(@Qualifier("movedLetter") MovedLetterServiceGrpc.MovedLetterServiceBlockingStub movedLetterService) {
+    public SentChoice(MovedLetterServiceGrpc.MovedLetterServiceBlockingStub movedLetterService) {
         this.movedLetterService = movedLetterService;
     }
 

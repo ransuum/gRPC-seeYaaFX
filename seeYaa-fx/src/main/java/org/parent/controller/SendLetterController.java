@@ -12,15 +12,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.parent.configuration.file.PathMultipartFile;
 import org.parent.configuration.file.size.FileSize;
 import org.parent.grpcserviceseeyaa.security.SecurityService;
+import org.parent.util.AlertWindow;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -116,7 +114,7 @@ public class SendLetterController {
         uploadTask.setOnFailed(e -> {
             Platform.runLater(() -> scene.setCursor(Cursor.DEFAULT));
 
-            showAlert("Upload Failed", uploadTask.getException().getMessage());
+            AlertWindow.showAlert(Alert.AlertType.ERROR, "Upload or Send Failed", "Text is too big or file. Maybe user not found");
         });
 
         new Thread(uploadTask).start();
@@ -137,7 +135,7 @@ public class SendLetterController {
                     selectedFiles.clear();
                     for (File file : files) {
                         if (file.length() > FileSize.ONE_GB.getSize()) {
-                            showAlert("File Too Large", "File exceeds %d MB limit: %.2f MB"
+                            showAlert(Alert.AlertType.ERROR, "File Size", "File exceeds %d MB limit: %.2f MB"
                                     .formatted(FileSize.ONE_GB.getSize(), file.length() / (1024.0 * 1024.0)));
                             continue;
                         }
@@ -153,7 +151,7 @@ public class SendLetterController {
             });
 
             fileProcessingTask.setOnFailed(event -> {
-                showAlert("Error", "Failed to process files.");
+                showAlert(Alert.AlertType.ERROR, "Can't attach files", "Failed to process files.");
                 scene.setCursor(Cursor.DEFAULT);
             });
 
