@@ -32,7 +32,6 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
 
     @Override
     public void signUp(SignUpRequest request, StreamObserver<Empty> responseObserver) {
-        try {
         grpcValidatorService.validSignUp(new SignUpRequestDto(
                 request.getEmail(), request.getUsername(), request.getPassword(),
                 request.getFirstname(), request.getLastname()));
@@ -45,20 +44,6 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
                 .build();
 
             userRepository.save(savedUser);
-        } catch (ConstraintViolationException e) {
-            String msg = e.getConstraintViolations().stream()
-                    .map(v -> v.getPropertyPath() + ": " + v.getMessage())
-                    .reduce((a, b) -> a + "; " + b)
-                    .orElse(e.getMessage());
-
-            responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
-                    .withDescription(msg)
-                    .asRuntimeException());
-        } catch (Exception ex) {
-            responseObserver.onError(io.grpc.Status.INTERNAL
-                    .withDescription("Internal server error: " + ex.getMessage())
-                    .asRuntimeException());
-        }
 
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();

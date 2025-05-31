@@ -181,7 +181,7 @@ public class CheckMyLetterController {
             final var fileRow = FileRowFactory.createFileRow(
                     meta,
                     this::fileDownload,
-                    () -> stage
+                    () -> (Stage) filesContainer.getScene().getWindow()
             );
             filesBox.getChildren().add(fileRow);
         }

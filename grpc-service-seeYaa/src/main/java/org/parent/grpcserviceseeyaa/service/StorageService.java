@@ -56,10 +56,9 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     public void downloadFile(FileIdRequest request, StreamObserver<DownloadFileResponse> responseObserver) {
         try {
             org.parent.grpcserviceseeyaa.entity.Files file = filesRepository.findById(request.getFileId())
-                    .orElseThrow(() ->
-                            Status.NOT_FOUND
-                                    .withDescription("File not found id=" + request.getFileId())
-                                    .asRuntimeException());
+                    .orElseThrow(() -> Status.NOT_FOUND
+                            .withDescription("File not found id=" + request.getFileId())
+                            .asRuntimeException());
 
             DownloadFileResponse out = DownloadFileResponse.newBuilder()
                     .setData(ByteString.copyFrom(file.getData()))

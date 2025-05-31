@@ -10,9 +10,11 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @Service
 public class GrpcValidatorServiceImpl implements GrpcValidatorService {
+
     @Override
     public void validateLetter(@Valid LetterRequestDto requestDto) {
         log.info("Validating letter request {}", requestDto);
+
     }
 
     @Override

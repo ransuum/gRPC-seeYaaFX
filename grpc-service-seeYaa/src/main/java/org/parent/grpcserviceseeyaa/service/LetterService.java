@@ -7,12 +7,12 @@ import com.seeYaa.proto.email.configuration.movedletter.SetLetterTypeRequest;
 import com.seeYaa.proto.email.service.letter.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.configuration.letter.MovedLetterConfigurationImpl;
 import org.parent.grpcserviceseeyaa.configuration.validator.GrpcValidatorService;
 import org.parent.grpcserviceseeyaa.dto.LetterRequestDto;
-import org.parent.grpcserviceseeyaa.exception.NotFoundException;
 import org.parent.grpcserviceseeyaa.mapper.LetterMapper;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
@@ -32,8 +32,9 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
 
     @Override
     public void sendLetter(LetterRequest request, StreamObserver<Letter> responseObserver) {
-        grpcValidatorService.validateLetter(new LetterRequestDto(
-                request.getText(), request.getTopic(), request.getUserToEmail(), request.getUserByEmail()));
+            grpcValidatorService.validateLetter(new LetterRequestDto(
+                    request.getText(), request.getTopic(), request.getUserToEmail(), request.getUserByEmail()));
+
         final var usersBy = userRepository.findByEmail(request.getUserByEmail())
                 .orElseThrow(() -> Status.NOT_FOUND
                         .withDescription("User (by) not found")
@@ -85,13 +86,13 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     @Override
     @Transactional(readOnly = true)
     public void findById(LetterIdRequest request, StreamObserver<Letter> responseObserver) {
-            final var letter = letterRepository.findById(request.getId())
-                    .orElseThrow(() -> Status.NOT_FOUND
-                            .withDescription("Letter not found")
-                            .asRuntimeException());
+        final var letter = letterRepository.findById(request.getId())
+                .orElseThrow(() -> Status.NOT_FOUND
+                        .withDescription("Letter not found")
+                        .asRuntimeException());
 
-            responseObserver.onNext(LetterMapper.INSTANCE.toLetterProto(letter));
-            responseObserver.onCompleted();
+        responseObserver.onNext(LetterMapper.INSTANCE.toLetterProto(letter));
+        responseObserver.onCompleted();
 
     }
 
