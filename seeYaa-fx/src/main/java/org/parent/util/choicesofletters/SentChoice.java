@@ -4,6 +4,7 @@ import com.seeYaa.proto.email.Letter;
 import com.seeYaa.proto.email.TypeOfLetter;
 import com.seeYaa.proto.email.service.movedletter.EmailRequest;
 import com.seeYaa.proto.email.service.movedletter.MovedLetterServiceGrpc;
+import io.grpc.StatusRuntimeException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

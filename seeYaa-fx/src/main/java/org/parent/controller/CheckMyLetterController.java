@@ -141,9 +141,10 @@ public class CheckMyLetterController {
         answers.setPadding(new Insets(10));
 
         final List<Answer> sorted = letterDto.getAnswersList();
+        log.info("answers size: {}", sorted.size());
 
         for (var answer : sorted) {
-            var answerRow = AnswerRowFactory.createAnswerRow(answer, textOfLetter::setText);
+            final var answerRow = AnswerRowFactory.createAnswerRow(answer, textOfLetter::setText);
             answers.getChildren().add(answerRow);
         }
     }
@@ -190,7 +191,7 @@ public class CheckMyLetterController {
         if (files.size() > 2) {
             final var scrollPane = new ScrollPane(filesBox);
             scrollPane.setFitToWidth(true);
-            scrollPane.setPrefViewportHeight(150);
+            scrollPane.setPrefViewportHeight(300);
             scrollPane.getStyleClass().add("scroll-pane");
             filesView = scrollPane;
         } else filesView = filesBox;

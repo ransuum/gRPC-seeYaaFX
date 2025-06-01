@@ -99,6 +99,7 @@ public class SendLetterController {
                             .setData(ByteString.copyFrom(multipartFile.getBytes()))
                             .setType(FileType.UNKNOWN)
                             .setName(file.getName())
+                            .setSize(multipartFile.getSize())
                             .build());
                 }
                 return null;

@@ -91,6 +91,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
                         .withDescription("Letter not found")
                         .asRuntimeException());
 
+        log.info("Answers: {}", letter.getAnswers());
         responseObserver.onNext(LetterMapper.INSTANCE.toLetterProto(letter));
         responseObserver.onCompleted();
 

@@ -263,6 +263,13 @@
     -fx-padding: 10;
 }
 
+.file-size-label {
+    -fx-font-family: "Inter";
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666;
+    -fx-padding: 0;
+}
+
 .file-name-label {
     -fx-font-family: "Inter";
     -fx-font-size: 14px;

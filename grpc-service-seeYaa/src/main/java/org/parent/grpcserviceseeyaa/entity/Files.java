@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "files_email")
 @Entity
 public class Files {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

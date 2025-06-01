@@ -15,6 +15,7 @@ public interface FilesMapper {
     Files toFilesProto(org.parent.grpcserviceseeyaa.entity.Files files);
 
     @Mapping(target = "data", qualifiedByName = "bytesToByteString")
+    @Mapping(target = "size", source = "size")
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     FileMetadata toMetaProto(org.parent.grpcserviceseeyaa.entity.Files src);
 

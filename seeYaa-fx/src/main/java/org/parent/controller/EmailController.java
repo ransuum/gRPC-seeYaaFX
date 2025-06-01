@@ -28,6 +28,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.security.SecurityService;
 import org.parent.grpcserviceseeyaa.util.fieldvalidation.FieldUtil;
 import org.parent.ui.LetterUIFactory;
@@ -40,6 +41,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class EmailController {
     @FXML
@@ -319,6 +321,7 @@ public class EmailController {
             stage.setScene(scene);
             stage.setTitle("Check Letter");
             final CheckMyLetterController controller = fxmlLoader.getController();
+            log.info("LETTER: {}", letter1.getAnswersList());
             controller.setLetter(letter1, function);
             controller.setCurrentEmail(emailOfAuthUser.getText());
             stage.widthProperty().addListener((obs, oldVal, newVal) -> stage.centerOnScreen());

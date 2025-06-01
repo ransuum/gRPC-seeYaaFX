@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "moved_letter")
 @Entity
 public class MovedLetter {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false, updatable = false)
