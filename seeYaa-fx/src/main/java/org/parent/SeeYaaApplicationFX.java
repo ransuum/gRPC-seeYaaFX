@@ -15,9 +15,12 @@ import java.util.Objects;
 public class SeeYaaApplicationFX extends Application {
     private ConfigurableApplicationContext springContext;
 
+    static {
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+
     @Override
     public void init() {
-        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
         springContext = new SpringApplicationBuilder(SpringSeeYaaGrpc.class).run();
     }
 

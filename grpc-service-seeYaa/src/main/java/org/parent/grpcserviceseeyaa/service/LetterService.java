@@ -7,7 +7,6 @@ import com.seeYaa.proto.email.configuration.movedletter.SetLetterTypeRequest;
 import com.seeYaa.proto.email.service.letter.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.configuration.letter.MovedLetterConfigurationImpl;
@@ -17,6 +16,7 @@ import org.parent.grpcserviceseeyaa.mapper.LetterMapper;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
 import org.springframework.grpc.server.service.GrpcService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -31,6 +31,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     private final GrpcValidatorService grpcValidatorService;
 
     @Override
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void sendLetter(LetterRequest request, StreamObserver<Letter> responseObserver) {
             grpcValidatorService.validateLetter(new LetterRequestDto(
                     request.getText(), request.getTopic(), request.getUserToEmail(), request.getUserByEmail()));
@@ -60,6 +61,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void setLetterToSpam(LetterIdEmailRequest request, StreamObserver<Empty> responseObserver) {
         movedLetterConfiguration.setLetterType(SetLetterTypeRequest.newBuilder()
                 .setLetterId(request.getLetterId())
@@ -72,6 +74,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void setLetterToGarbage(LetterIdEmailRequest request, StreamObserver<Empty> responseObserver) {
         movedLetterConfiguration.setLetterType(SetLetterTypeRequest.newBuilder()
                 .setLetterId(request.getLetterId())
@@ -85,13 +88,12 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void findById(LetterIdRequest request, StreamObserver<Letter> responseObserver) {
         final var letter = letterRepository.findById(request.getId())
                 .orElseThrow(() -> Status.NOT_FOUND
                         .withDescription("Letter not found")
                         .asRuntimeException());
-
-        log.info("Answers: {}", letter.getAnswers());
         responseObserver.onNext(LetterMapper.INSTANCE.toLetterProto(letter));
         responseObserver.onCompleted();
 
@@ -99,6 +101,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void findAllSentByTopic(TopicSearchRequestBy request, StreamObserver<LetterList> responseObserver) {
         final var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserBy(
                         request.getTopic(),
@@ -115,6 +118,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void findAllInboxByTopic(TopicSearchRequestTo request, StreamObserver<LetterList> responseObserver) {
         final var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserTo(
                         request.getTopic(),
@@ -131,6 +135,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void deleteLetterById(LetterIdRequest request, StreamObserver<Empty> responseObserver) {
         letterRepository.findById(request.getId()).ifPresent(letterRepository::delete);
 

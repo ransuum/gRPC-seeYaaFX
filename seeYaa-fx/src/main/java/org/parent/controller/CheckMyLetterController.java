@@ -141,7 +141,6 @@ public class CheckMyLetterController {
         answers.setPadding(new Insets(10));
 
         final List<Answer> sorted = letterDto.getAnswersList();
-        log.info("answers size: {}", sorted.size());
 
         for (var answer : sorted) {
             final var answerRow = AnswerRowFactory.createAnswerRow(answer, textOfLetter::setText);

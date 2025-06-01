@@ -321,7 +321,6 @@ public class EmailController {
             stage.setScene(scene);
             stage.setTitle("Check Letter");
             final CheckMyLetterController controller = fxmlLoader.getController();
-            log.info("LETTER: {}", letter1.getAnswersList());
             controller.setLetter(letter1, function);
             controller.setCurrentEmail(emailOfAuthUser.getText());
             stage.widthProperty().addListener((obs, oldVal, newVal) -> stage.centerOnScreen());
