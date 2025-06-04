@@ -1,7 +1,6 @@
 package org.parent.controller;
 
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

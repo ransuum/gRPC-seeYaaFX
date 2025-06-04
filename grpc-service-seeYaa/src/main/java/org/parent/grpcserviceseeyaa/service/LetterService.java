@@ -13,6 +13,7 @@ import org.parent.grpcserviceseeyaa.configuration.letter.MovedLetterConfiguratio
 import org.parent.grpcserviceseeyaa.mapper.LetterMapper;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
+import org.parent.grpcserviceseeyaa.security.SecurityService;
 import org.springframework.grpc.server.service.GrpcService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     private final MovedLetterConfigurationImpl movedLetterConfiguration;
     private final LetterRepository letterRepository;
     private final UserRepository userRepository;
+    private final SecurityService securityService;
 
     @Override
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -44,6 +46,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
                                 .activeLetter(Boolean.TRUE)
                                 .createdAt(LocalDateTime.now())
                                 .deleteTime(LocalDateTime.now())
+                                .watched(Boolean.FALSE)
                                 .build())
                 ).orElseThrow(() -> Status.NOT_FOUND
                         .withDescription("User (to) not found")
@@ -81,16 +84,21 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     @PreAuthorize("hasRole('ROLE_USER')")
     public void findById(LetterIdRequest request, StreamObserver<Letter> responseObserver) {
-        final var letter = letterRepository.findById(request.getId())
+        var letter = letterRepository.findById(request.getId())
                 .orElseThrow(() -> Status.NOT_FOUND
                         .withDescription("Letter not found")
                         .asRuntimeException());
+        if (!letter.getUserBy().getEmail().equals(securityService.getCurrentUserEmail())
+                && letter.getWatched().equals(Boolean.FALSE)) {
+            securityService.getCurrentUserEmail();
+            letter.setWatched(Boolean.TRUE);
+            letter = letterRepository.save(letter);
+        }
         responseObserver.onNext(LetterMapper.INSTANCE.toLetterProto(letter));
         responseObserver.onCompleted();
-
     }
 
     @Override
@@ -99,7 +107,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     public void findAllSentByTopic(TopicSearchRequestBy request, StreamObserver<LetterList> responseObserver) {
         final var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserBy(
                         request.getTopic(),
-                        userRepository.findByEmail(request.getUserByEmail()).orElse(null))
+                        userRepository.findByEmail(securityService.getCurrentUserEmail()).orElse(null))
                 .stream()
                 .map(LetterMapper.INSTANCE::toLetterProto)
                 .toList();
@@ -134,6 +142,15 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
         letterRepository.findById(request.getId()).ifPresent(letterRepository::delete);
 
         responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public void countOfInboxesLetter(LetterByEmail request, StreamObserver<LetterCount> responseObserver) {
+        final long count = letterRepository.countUnwatchedInboxLetters(securityService.getCurrentUserEmail());
+        responseObserver.onNext(LetterCount.newBuilder().setCount(count).build());
         responseObserver.onCompleted();
     }
 }

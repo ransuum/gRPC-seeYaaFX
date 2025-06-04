@@ -1,10 +1,7 @@
 package org.parent.grpcserviceseeyaa.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,9 +35,11 @@ public class Letter {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    private Boolean activeLetter = true;
+    private Boolean activeLetter = Boolean.FALSE;
 
     private LocalDateTime deleteTime;
+
+    private Boolean watched;
 
     @OneToMany(mappedBy = "currentLetter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Answer> answers;

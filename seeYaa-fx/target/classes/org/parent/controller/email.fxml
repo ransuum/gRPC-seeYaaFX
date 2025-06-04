@@ -133,5 +133,6 @@
          </ImageView>
       </children>
    </AnchorPane>
-   <DatePicker layoutX="601.0" layoutY="161.0" style="-fx-background-color: #B1B1B1;" />
+   <DatePicker layoutX="758.0" layoutY="161.0" style="-fx-background-color: #B1B1B1;" />
+   <Text fx:id="inboxCount" fill="#357c2d" layoutX="191.0" layoutY="212.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
 </AnchorPane>

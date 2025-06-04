@@ -36,6 +36,10 @@ message TopicSearchRequestTo {
 
 message LetterList { repeated email.models.Letter letters = 1; }
 
+message LetterCount { int64 count = 1; }
+
+message LetterByEmail { string byEmail = 1; }
+
 message LetterWithAnswers {
   string                           letterId  = 1;
   repeated email.models.Answer     answers   = 2;
@@ -52,4 +56,6 @@ service LetterService {
   rpc FindAllInboxByTopic   (TopicSearchRequestTo)   returns (LetterList);
 
   rpc DeleteLetterById      (LetterIdRequest)        returns (google.protobuf.Empty);
+
+  rpc CountOfInboxesLetter  (LetterByEmail)  returns (LetterCount);
 }

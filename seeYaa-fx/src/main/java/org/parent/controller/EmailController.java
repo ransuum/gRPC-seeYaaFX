@@ -5,10 +5,7 @@ import com.seeYaa.proto.email.Letter;
 import com.seeYaa.proto.email.TypeOfLetter;
 import com.seeYaa.proto.email.configuration.movedletter.MovedLetterConfigurationGrpc;
 import com.seeYaa.proto.email.configuration.movedletter.SetLetterTypeRequest;
-import com.seeYaa.proto.email.service.letter.LetterIdRequest;
-import com.seeYaa.proto.email.service.letter.LetterServiceGrpc;
-import com.seeYaa.proto.email.service.letter.TopicSearchRequestBy;
-import com.seeYaa.proto.email.service.letter.TopicSearchRequestTo;
+import com.seeYaa.proto.email.service.letter.*;
 import com.seeYaa.proto.email.service.users.UsersServiceGrpc;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,6 +25,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.security.SecurityService;
 import org.parent.grpcserviceseeyaa.util.fieldvalidation.FieldUtil;
@@ -46,6 +44,7 @@ import java.util.stream.Collectors;
 public class EmailController {
     @FXML
     @Getter
+    @Setter
     private Text emailOfAuthUser;
     @FXML
     private Button sent;
@@ -70,6 +69,8 @@ public class EmailController {
     private VBox hboxInsideInboxes;
     @FXML
     private ImageView editProfile;
+    @FXML
+    private Text inboxCount;
 
     private static final String SELECTED = "selected";
 
@@ -77,31 +78,32 @@ public class EmailController {
     private final LetterServiceGrpc.LetterServiceBlockingStub letterService;
     private final UsersServiceGrpc.UsersServiceBlockingStub usersService;
     private final Map<TypeOfLetter, Choice> typeOfLetterChoices;
-    private final SecurityService securityService;
     private final MovedLetterConfigurationGrpc.MovedLetterConfigurationBlockingStub letterMoveService;
     private final Map<String, Stage> openStages;
+    private final SecurityService securityService;
 
     private Stage stage;
     private Scene scene;
     private Parent root;
 
-    public EmailController(ConfigurableApplicationContext springContext, LetterServiceGrpc.LetterServiceBlockingStub letterService,
+    public EmailController(ConfigurableApplicationContext springContext,
+                           LetterServiceGrpc.LetterServiceBlockingStub letterService,
                            UsersServiceGrpc.UsersServiceBlockingStub usersService, List<Choice> choices,
-                           SecurityService securityService, MovedLetterConfigurationGrpc.MovedLetterConfigurationBlockingStub letterMoveService,
-                           Map<String, Stage> openStages) {
+                           MovedLetterConfigurationGrpc.MovedLetterConfigurationBlockingStub letterMoveService,
+                           Map<String, Stage> openStages, SecurityService securityService) {
         this.springContext = springContext;
         this.letterService = letterService;
         this.usersService = usersService;
         this.typeOfLetterChoices = choices.stream()
                 .collect(Collectors.toMap(Choice::getChoice, o -> o));
-        this.securityService = securityService;
         this.letterMoveService = letterMoveService;
         this.openStages = openStages;
+        this.securityService = securityService;
     }
 
     @FXML
     public void initialize() {
-        emailOfAuthUser.setText(securityService.getCurrentUserEmail());
+        this.emailOfAuthUser.setText(securityService.getCurrentUserEmail());
         write.setOnMouseClicked(mouseEvent -> write());
         editProfile.setOnMouseClicked(mouseEvent -> editProfile());
 
@@ -110,6 +112,12 @@ public class EmailController {
         addToBox(spam, 3, TypeOfLetter.SPAM);
         addToBox(garbage, 4, TypeOfLetter.GARBAGE);
         registerSearchHandlers();
+
+        inboxCount.setText(String.valueOf(
+                letterService.countOfInboxesLetter(
+                        LetterByEmail.newBuilder().setByEmail(emailOfAuthUser.getText()).build()
+                ).getCount()
+        ));
     }
 
     @FXML
@@ -132,6 +140,7 @@ public class EmailController {
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/login.css")).toExternalForm());
         stage.centerOnScreen();
         stage.setScene(scene);
+        securityService.clearContext();
         stage.show();
     }
 
@@ -222,7 +231,9 @@ public class EmailController {
 
     public void addLetterToUI(Letter letter, int function) {
         final var textField = LetterUIFactory.createTextField(letter, function);
-        textField.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/letters.css")).toExternalForm());
+        if (letter.getWatched()) textField.getStylesheets()
+                .add(Objects.requireNonNull(getClass().getResource("static/letters-watched.css")).toExternalForm());
+        else textField.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/letters-unwatched.css")).toExternalForm());
         final TextField textField1 = new TextField();
         textField1.setAlignment(Pos.CENTER);
         textField1.setEditable(false);
@@ -329,9 +340,18 @@ public class EmailController {
             stage.setOnCloseRequest(event -> openStages.remove(letterId));
             stage.initModality(Modality.APPLICATION_MODAL);
             openStages.put(letterId, stage);
+            updateInboxCounter();
             stage.show();
         } catch (IOException e) {
             AlertWindow.showAlert(Alert.AlertType.ERROR, "Field", e.getMessage());
         }
+    }
+
+    private void updateInboxCounter() {
+        inboxCount.setText(String.valueOf(
+                letterService.countOfInboxesLetter(
+                        LetterByEmail.newBuilder().setByEmail(emailOfAuthUser.getText()).build()
+                ).getCount()
+        ));
     }
 }

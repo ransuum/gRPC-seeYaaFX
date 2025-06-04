@@ -45,12 +45,14 @@ message Letter {
   string topic = 4;
   string text = 5;
 
-  google.protobuf.Timestamp created_at = 6;
-  bool                     active_letter = 7;
-  google.protobuf.Timestamp delete_time = 8;
+  bool watched = 6;
 
-  repeated Answer answers = 9;
-  repeated Files  files = 10;
+  google.protobuf.Timestamp created_at = 7;
+  bool                     active_letter = 8;
+  google.protobuf.Timestamp delete_time = 9;
+
+  repeated Answer answers = 10;
+  repeated Files  files = 11;
 }
 
 message Answer {

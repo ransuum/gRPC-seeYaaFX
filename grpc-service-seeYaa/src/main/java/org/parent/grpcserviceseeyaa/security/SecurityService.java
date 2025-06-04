@@ -18,4 +18,8 @@ public class SecurityService {
     public void setAuthentication(Authentication authentication) {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+
+    public void clearContext() {
+        SecurityContextHolder.getContext().setAuthentication(null);
+    }
 }

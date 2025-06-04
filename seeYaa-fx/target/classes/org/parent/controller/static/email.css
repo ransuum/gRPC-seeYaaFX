@@ -234,13 +234,6 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
 }
 
-.text-field {
-    -fx-background-color: rgba(255, 255, 255, 0.5);
-    -fx-border-width: 0;
-    -fx-background-radius: 5px;
-    -fx-transition: all 0.3s ease;
-}
-
 .text-field:hover {
     -fx-background-color: rgba(172, 136, 136, 0.7);
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 1);

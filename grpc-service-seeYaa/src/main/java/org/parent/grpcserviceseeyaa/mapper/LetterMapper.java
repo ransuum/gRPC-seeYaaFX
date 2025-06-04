@@ -12,6 +12,7 @@ public interface LetterMapper {
     @Mapping(target = "createdAt", expression = "java(org.parent.grpcserviceseeyaa.util.time.TimeProtoUtil.toProto(letter.getCreatedAt()))")
     @Mapping(target = "deleteTime", expression = "java(org.parent.grpcserviceseeyaa.util.time.TimeProtoUtil.toProto(letter.getDeleteTime()))")
     @Mapping(target = "answersList", ignore = true)
+    @Mapping(target = "watched", source = "watched")
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     Letter toLetterProto(org.parent.grpcserviceseeyaa.entity.Letter letter);
 }

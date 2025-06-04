@@ -26,4 +26,7 @@ public interface LetterRepository extends JpaRepository<Letter, String> {
                 order by m.letter.createdAt desc
             """)
     List<Letter> findAllLettersMovedByUser(@Param("email") String email, @Param("type") TypeOfLetter typeOfLetter);
+
+    @Query("select count(l) from Letter l where l.userTo.email = :email and l.activeLetter = true and l.watched = false")
+    long countUnwatchedInboxLetters(@Param("email") String email);
 }

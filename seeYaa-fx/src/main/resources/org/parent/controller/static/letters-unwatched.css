@@ -1,0 +1,12 @@
+.text-field {
+    -fx-background-color: #928E85;
+    -fx-text-fill: #28032C;
+    -fx-opacity: 100%;
+    -fx-font-size: 16;
+    -fx-font-family: Inter;
+    -fx-min-width: 700px;
+    -fx-min-height: 35px;
+    -fx-padding: 5px 0px 5px 5px;
+    -fx-background-radius: 35px;
+    -fx-font-weight: bold;
+}

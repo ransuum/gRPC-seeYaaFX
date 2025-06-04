@@ -10,6 +10,7 @@ import org.parent.grpcserviceseeyaa.entity.Answer;
 import org.parent.grpcserviceseeyaa.repository.AnswerRepository;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
+import org.parent.grpcserviceseeyaa.security.SecurityService;
 import org.springframework.grpc.server.service.GrpcService;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class AnswerService extends AnswerServiceGrpc.AnswerServiceImplBase {
     private final AnswerRepository answerRepository;
     private final LetterRepository letterRepo;
     private final UserRepository usersRepo;
+    private final SecurityService securityService;
 
     @Override
     public void createAnswer(CreateAnswerRequest request, StreamObserver<Empty> responseObserver) {
@@ -28,7 +30,7 @@ public class AnswerService extends AnswerServiceGrpc.AnswerServiceImplBase {
                         .withDescription("Letter not found")
                         .asRuntimeException());
 
-        final var users = usersRepo.findByEmail(request.getEmailBy())
+        final var users = usersRepo.findByEmail(securityService.getCurrentUserEmail())
                 .orElseThrow(() -> Status.NOT_FOUND
                         .withDescription("You are not logged in")
                         .asRuntimeException());
