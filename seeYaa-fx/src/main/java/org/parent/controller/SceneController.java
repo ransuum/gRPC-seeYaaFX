@@ -71,7 +71,6 @@ public class SceneController {
         incorrectInputEmail.setVisible(false);
         incorrectInputPassword.setVisible(false);
 
-
         try {
             grpcValidatorService.validSignIn(new SignInRequestDto(emailInput.getText(), password.getText()));
             final UsernamePasswordAuthenticationToken authToken =

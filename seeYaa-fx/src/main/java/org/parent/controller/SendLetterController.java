@@ -113,7 +113,7 @@ public class SendLetterController {
                     scene.setCursor(Cursor.DEFAULT);
                 }));
 
-        uploadTask.setOnFailed(e -> {
+        uploadTask.setOnFailed(e ->
             Platform.runLater(() -> {
                 scene.setCursor(Cursor.DEFAULT);
                 text.setDisable(false);
@@ -121,8 +121,8 @@ public class SendLetterController {
                 sendLetter.setDisable(false);
                 toWhom.setDisable(false);
                 topic.setDisable(false);
-            });
-        });
+                AlertWindow.showAlert(Alert.AlertType.ERROR, "Send Letter Failed", uploadTask.getException().getLocalizedMessage());
+            }));
 
         new Thread(uploadTask).start();
     }

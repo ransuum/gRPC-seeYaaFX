@@ -10,8 +10,6 @@ import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.configuration.letter.MovedLetterConfigurationImpl;
-import org.parent.grpcserviceseeyaa.configuration.validator.GrpcValidatorService;
-import org.parent.grpcserviceseeyaa.dto.LetterRequestDto;
 import org.parent.grpcserviceseeyaa.mapper.LetterMapper;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
@@ -28,17 +26,13 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     private final MovedLetterConfigurationImpl movedLetterConfiguration;
     private final LetterRepository letterRepository;
     private final UserRepository userRepository;
-    private final GrpcValidatorService grpcValidatorService;
 
     @Override
     @PreAuthorize("hasRole('ROLE_USER')")
     public void sendLetter(LetterRequest request, StreamObserver<Letter> responseObserver) {
-            grpcValidatorService.validateLetter(new LetterRequestDto(
-                    request.getText(), request.getTopic(), request.getUserToEmail(), request.getUserByEmail()));
-
         final var usersBy = userRepository.findByEmail(request.getUserByEmail())
                 .orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("User (by) not found")
+                        .withDescription("You are not logged in")
                         .asRuntimeException());
         final var letter = userRepository.findByEmail(request.getUserToEmail())
                 .map(userTo -> letterRepository.save(

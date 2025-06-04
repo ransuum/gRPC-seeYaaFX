@@ -53,7 +53,7 @@ public class AnswerController {
                     .build());
             AlertWindow.showAlert(Alert.AlertType.CONFIRMATION, "Answer", "Sent successfully!");
         } catch (Exception e) {
-            AlertWindow.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            AlertWindow.showAlert(Alert.AlertType.ERROR, "Answer error", e.getMessage());
         }
     }
 }
