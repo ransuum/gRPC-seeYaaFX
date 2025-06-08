@@ -107,7 +107,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     public void findAllSentByTopic(TopicSearchRequestBy request, StreamObserver<LetterList> responseObserver) {
         final var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserBy(
                         request.getTopic(),
-                        userRepository.findByEmail(securityService.getCurrentUserEmail()).orElse(null))
+                        userRepository.findByEmail(request.getUserByEmail()).orElse(null))
                 .stream()
                 .map(LetterMapper.INSTANCE::toLetterProto)
                 .toList();

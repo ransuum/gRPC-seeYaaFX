@@ -1,2 +1,5 @@
 # Project exclude paths
+.idea
 /seeyaa-proto/target/
+/seeYaa-fx/target/
+/grpc-service-seeYaa/target/
