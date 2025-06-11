@@ -54,7 +54,7 @@
 }
 
 .avatar {
-    -fx-background-color: #baa7d9;
+    -fx-background-color: #454545;
     -fx-background-radius: 50%;
     -fx-min-width: 40px;
     -fx-min-height: 40px;
@@ -100,7 +100,7 @@
 }
 
 .titled-pane > .title {
-    -fx-background-color: #baa7d9;
+    -fx-background-color: #FFFFFF;
     -fx-background-radius: 8px;
     -fx-padding: 8px 12px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
@@ -108,7 +108,7 @@
 }
 
 .titled-pane > .title:hover {
-    -fx-background-color: derive(#baa7d9, 10%);
+    -fx-background-color: derive(#C0C0C0, 10%);
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 3);
     -fx-translate-y: -1;
 }
@@ -155,7 +155,7 @@
 }
 
 .titled-pane:focused > .title {
-    -fx-background-color: derive(#baa7d9, 15%);
+    -fx-background-color: derive(#CD5C5C, 15%);
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 3);
 }
 
@@ -175,7 +175,7 @@
 }
 
 .text-field:focused {
-    -fx-effect: dropshadow(gaussian, rgba(186,167,217,0.4), 10, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, #000000, 10, 0.5, 0, 0);
     -fx-background-color: derive(#D9D9D9, 5%);
 }
 
@@ -189,7 +189,7 @@
 }
 
 .text-area:focused {
-    -fx-effect: dropshadow(gaussian, rgba(186,167,217,0.4), 10, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, #000000, 10, 0.5, 0, 0);
 }
 
 .text-area .content {
@@ -315,6 +315,6 @@
 }
 
 .scroll-pane > .scroll-bar:vertical > .thumb {
-    -fx-background-color: #baa7d9;
+    -fx-background-color: #000000;
     -fx-background-radius: 10;
 }
