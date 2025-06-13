@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.parent.util.DateConfigurer;
 
 import java.util.function.Consumer;
 
@@ -32,7 +33,7 @@ public class AnswerRowFactory {
         final var nameLabel = new Label(answerDto.getUserByAnswered().getFirstname());
         nameLabel.getStyleClass().add("answer-name");
 
-        final var dateLabel = new Label(answerDto.getCreatedAt().toString());
+        final var dateLabel = new Label(DateConfigurer.getDate(answerDto.getCreatedAt()));
         dateLabel.getStyleClass().add("answer-date");
 
         final var headerBox = new HBox(10);

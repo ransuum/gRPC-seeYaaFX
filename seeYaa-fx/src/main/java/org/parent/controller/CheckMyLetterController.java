@@ -210,7 +210,7 @@ public class CheckMyLetterController {
             new Thread(downloadTask).start();
         });
         loadTask.setOnFailed(e ->
-                showAlert(Alert.AlertType.ERROR,"Filedownload", loadTask.getException().getMessage()));
+                showAlert(Alert.AlertType.ERROR,"File download", loadTask.getException().getMessage()));
         new Thread(loadTask).start();
     }
 
