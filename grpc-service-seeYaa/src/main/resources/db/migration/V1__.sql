@@ -3,7 +3,7 @@ CREATE SEQUENCE IF NOT EXISTS files_email_id_seq START WITH 1 INCREMENT BY 1;
 CREATE TABLE if not exists answers
 (
     id                VARCHAR(255)                NOT NULL,
-    answer_text       VARCHAR(255)                NOT NULL,
+    answer_text       VARCHAR(800)                NOT NULL,
     created_at        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     current_letter_id VARCHAR(255),
     user_by_id        VARCHAR(255),
@@ -53,6 +53,7 @@ CREATE TABLE if not exists users
     lastname  VARCHAR(255) NOT NULL,
     password  VARCHAR(255) NOT NULL,
     username  VARCHAR(255) NOT NULL,
+    roles     varchar(255)[],
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 
