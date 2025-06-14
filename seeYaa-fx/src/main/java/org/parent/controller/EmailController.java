@@ -140,7 +140,6 @@ public class EmailController {
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/login.css")).toExternalForm());
         stage.centerOnScreen();
         stage.setScene(scene);
-        securityService.clearContext();
         stage.show();
     }
 

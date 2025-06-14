@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Objects;
 
@@ -17,7 +16,6 @@ public class SeeYaaApplicationFX extends Application {
 
     @Override
     public void init() {
-        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
         springContext = new SpringApplicationBuilder(SpringSeeYaaGrpc.class).run();
     }
 

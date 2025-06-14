@@ -1,25 +1,29 @@
 package org.parent.grpcserviceseeyaa.security;
 
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import lombok.RequiredArgsConstructor;
+import org.parent.grpcserviceseeyaa.security.contextholder.AuthenticationStore;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
+@RequiredArgsConstructor
 public class SecurityService {
+    private final AuthenticationStore authenticationStore;
+
     public String getCurrentUserEmail() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated())
-            throw new AuthenticationCredentialsNotFoundException("No authenticated user found");
-
-        return authentication.getName();
+        final var auth = authenticationStore.get();
+        if (auth == null)
+            throw new StatusRuntimeException(Status.UNAUTHENTICATED.withDescription("You are not logged in"));
+        return auth.email();
     }
 
-    public void setAuthentication(Authentication authentication) {
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    public void clearContext() {
-        SecurityContextHolder.getContext().setAuthentication(null);
+    public Set<String> getCurrentUserRoles() {
+        final var auth = authenticationStore.get();
+        if (auth == null)
+            throw new StatusRuntimeException(Status.UNAUTHENTICATED.withDescription("You are not logged in"));
+        return auth.roles();
     }
 }

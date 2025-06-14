@@ -15,12 +15,12 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.parent.configuration.file.MultipartFile;
 import org.parent.configuration.file.PathMultipartFile;
 import org.parent.configuration.file.size.FileSize;
 import org.parent.grpcserviceseeyaa.security.SecurityService;
 import org.parent.util.AlertWindow;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,7 +98,7 @@ public class SendLetterController {
                             .setLetterId(savedLetter.getId())
                             .setData(ByteString.copyFrom(multipartFile.getBytes()))
                             .setType(FileType.UNKNOWN)
-                            .setName(file.getName())
+                            .setName(multipartFile.getOriginalFilename())
                             .setSize(multipartFile.getSize())
                             .build());
                 }

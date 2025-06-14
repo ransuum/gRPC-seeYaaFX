@@ -4,7 +4,7 @@ import com.seeYaa.proto.email.Letter;
 import com.seeYaa.proto.email.TypeOfLetter;
 import com.seeYaa.proto.email.service.movedletter.EmailRequest;
 import com.seeYaa.proto.email.service.movedletter.MovedLetterServiceGrpc;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.parent.grpcserviceseeyaa.security.rolechecker.Authorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +19,7 @@ public class SpamChoice implements Choice {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Authorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
     public List<Letter> addToBox(int index, String email) {
         return movedLetterService.getSpamLetters(

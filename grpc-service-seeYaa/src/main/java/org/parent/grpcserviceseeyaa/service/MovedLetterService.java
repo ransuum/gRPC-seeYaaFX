@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.mapper.LetterMapper;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
+import org.parent.grpcserviceseeyaa.security.rolechecker.Authorize;
 import org.springframework.grpc.server.service.GrpcService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class MovedLetterService extends MovedLetterServiceGrpc.MovedLetterServic
     private final LetterRepository letterRepository;
 
     @Override
+    @Authorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
     public void getSpamLetters(EmailRequest request, StreamObserver<LetterList> responseObserver) {
         final var letters = letterRepository.findAllLettersMovedByUser(request.getEmail(), TypeOfLetter.SPAM)
@@ -32,6 +34,7 @@ public class MovedLetterService extends MovedLetterServiceGrpc.MovedLetterServic
     }
 
     @Override
+    @Authorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
     public void getGarbageLetters(EmailRequest request, StreamObserver<LetterList> responseObserver) {
         final var letters = letterRepository.findAllLettersMovedByUser(request.getEmail(), TypeOfLetter.GARBAGE)
@@ -44,6 +47,7 @@ public class MovedLetterService extends MovedLetterServiceGrpc.MovedLetterServic
     }
 
     @Override
+    @Authorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
     public void getSentLetters(EmailRequest request, StreamObserver<LetterList> responseObserver) {
         final var letters = letterRepository.findSentActiveByUser(request.getEmail())
@@ -55,6 +59,7 @@ public class MovedLetterService extends MovedLetterServiceGrpc.MovedLetterServic
     }
 
     @Override
+    @Authorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
     public void getInboxLetters(EmailRequest request, StreamObserver<LetterList> responseObserver) {
         final var letters = letterRepository.findInboxActiveByUser(request.getEmail())

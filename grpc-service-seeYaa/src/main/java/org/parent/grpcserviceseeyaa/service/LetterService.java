@@ -8,14 +8,15 @@ import com.seeYaa.proto.email.service.letter.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.configuration.letter.MovedLetterConfigurationImpl;
 import org.parent.grpcserviceseeyaa.mapper.LetterMapper;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
 import org.parent.grpcserviceseeyaa.security.SecurityService;
+import org.parent.grpcserviceseeyaa.security.rolechecker.Authorize;
 import org.springframework.grpc.server.service.GrpcService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -29,8 +30,9 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     private final UserRepository userRepository;
     private final SecurityService securityService;
 
+    @SneakyThrows
     @Override
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Authorize("hasRole('ROLE_USER')")
     public void sendLetter(LetterRequest request, StreamObserver<Letter> responseObserver) {
         final var usersBy = userRepository.findByEmail(request.getUserByEmail())
                 .orElseThrow(() -> Status.NOT_FOUND
@@ -58,7 +60,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Authorize("hasRole('ROLE_USER')")
     public void setLetterToSpam(LetterIdEmailRequest request, StreamObserver<Empty> responseObserver) {
         movedLetterConfiguration.setLetterType(SetLetterTypeRequest.newBuilder()
                 .setLetterId(request.getLetterId())
@@ -71,7 +73,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Authorize("hasRole('ROLE_USER')")
     public void setLetterToGarbage(LetterIdEmailRequest request, StreamObserver<Empty> responseObserver) {
         movedLetterConfiguration.setLetterType(SetLetterTypeRequest.newBuilder()
                 .setLetterId(request.getLetterId())
@@ -85,7 +87,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Authorize("hasRole('ROLE_USER')")
     public void findById(LetterIdRequest request, StreamObserver<Letter> responseObserver) {
         var letter = letterRepository.findById(request.getId())
                 .orElseThrow(() -> Status.NOT_FOUND
@@ -103,7 +105,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
 
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Authorize("hasRole('ROLE_USER')")
     public void findAllSentByTopic(TopicSearchRequestBy request, StreamObserver<LetterList> responseObserver) {
         final var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserBy(
                         request.getTopic(),
@@ -120,7 +122,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
 
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Authorize("hasRole('ROLE_USER')")
     public void findAllInboxByTopic(TopicSearchRequestTo request, StreamObserver<LetterList> responseObserver) {
         final var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserTo(
                         request.getTopic(),
@@ -137,7 +139,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Authorize("hasRole('ROLE_USER')")
     public void deleteLetterById(LetterIdRequest request, StreamObserver<Empty> responseObserver) {
         letterRepository.findById(request.getId()).ifPresent(letterRepository::delete);
 
@@ -147,7 +149,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
 
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Authorize("hasRole('ROLE_USER')")
     public void countOfInboxesLetter(LetterByEmail request, StreamObserver<LetterCount> responseObserver) {
         final long count = letterRepository.countUnwatchedInboxLetters(securityService.getCurrentUserEmail());
         responseObserver.onNext(LetterCount.newBuilder().setCount(count).build());

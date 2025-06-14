@@ -29,9 +29,18 @@ message UserWithLetters {
   repeated email.models.Letter sent    = 2;
 }
 
+message SignInRequest {
+  string credentialsBase64 = 1;
+}
+
+message SignInResponse {
+  string email     = 1;
+}
+
 service UsersService {
   rpc SignUp                 (SignUpRequest)          returns (google.protobuf.Empty);
   rpc GetCurrentUser         (google.protobuf.Empty)  returns (email.models.Users);
   rpc GetCurrentUserExtended (google.protobuf.Empty)  returns (UserWithLetters);
   rpc EditProfile            (EditProfileRequest)     returns (google.protobuf.Empty);
+  rpc Authentication         (SignInRequest)          returns (SignInResponse);
 }

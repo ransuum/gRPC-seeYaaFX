@@ -11,6 +11,7 @@ import org.parent.grpcserviceseeyaa.repository.AnswerRepository;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
 import org.parent.grpcserviceseeyaa.security.SecurityService;
+import org.parent.grpcserviceseeyaa.security.rolechecker.Authorize;
 import org.springframework.grpc.server.service.GrpcService;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class AnswerService extends AnswerServiceGrpc.AnswerServiceImplBase {
     private final SecurityService securityService;
 
     @Override
+    @Authorize("hasRole('ROLE_USER')")
     public void createAnswer(CreateAnswerRequest request, StreamObserver<Empty> responseObserver) {
         final var letter = letterRepo.findById(request.getLetterId())
                 .orElseThrow(() -> Status.NOT_FOUND
