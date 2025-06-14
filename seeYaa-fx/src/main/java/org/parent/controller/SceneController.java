@@ -1,5 +1,7 @@
 package org.parent.controller;
 
+import com.seeYaa.proto.email.service.users.SignInRequest;
+import com.seeYaa.proto.email.service.users.UsersServiceGrpc;
 import jakarta.validation.ConstraintViolationException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,21 +16,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.configuration.validator.GrpcValidatorService;
 import org.parent.grpcserviceseeyaa.dto.SignInRequestDto;
-import org.parent.grpcserviceseeyaa.security.SecurityService;
+import org.parent.grpcserviceseeyaa.security.rsa.RsaCredentials;
 import org.parent.util.AlertWindow;
 import org.parent.util.error.AuthorizationValidator;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Objects;
 
+@Slf4j
 @Component
 public class SceneController {
     @FXML private TextField emailInput;
@@ -38,19 +38,19 @@ public class SceneController {
     @FXML private Label incorrectInputPassword;
 
     private final ConfigurableApplicationContext springContext;
-    private final AuthenticationManager authenticationManager;
-    private final SecurityService securityService;
+    private final RsaCredentials rsaCredentials;
+    private final UsersServiceGrpc.UsersServiceBlockingStub userService;
     private final GrpcValidatorService grpcValidatorService;
 
     private Stage stage;
     private Scene scene;
     private Parent root;
 
-    public SceneController(ConfigurableApplicationContext springContext, AuthenticationManager authenticationManager,
-                           SecurityService securityService, GrpcValidatorService grpcValidatorService) {
+    public SceneController(ConfigurableApplicationContext springContext, RsaCredentials rsaCredentials,
+                           UsersServiceGrpc.UsersServiceBlockingStub userService, GrpcValidatorService grpcValidatorService) {
         this.springContext = springContext;
-        this.authenticationManager = authenticationManager;
-        this.securityService = securityService;
+        this.rsaCredentials = rsaCredentials;
+        this.userService = userService;
         this.grpcValidatorService = grpcValidatorService;
     }
 
@@ -72,11 +72,9 @@ public class SceneController {
 
         try {
             grpcValidatorService.validSignIn(new SignInRequestDto(emailInput.getText(), password.getText()));
-            final UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(emailInput.getText(), password.getText());
-
-            final Authentication auth = authenticationManager.authenticate(authToken);
-            securityService.setAuthentication(auth);
+            userService.authentication(SignInRequest.newBuilder()
+                    .setCredentialsBase64(rsaCredentials.encrypt(emailInput.getText(), password.getText()))
+                    .build());
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("email.fxml"));
             fxmlLoader.setControllerFactory(springContext::getBean);
             root = fxmlLoader.load();
@@ -93,7 +91,7 @@ public class SceneController {
             check.checkFieldsLogin(e);
             incorrectInputPassword = check.getIncorrectInputPassword();
             incorrectInputEmail = check.getIncorrectInputEmail();
-        } catch (AuthenticationException e) {
+        } catch (SecurityException e) {
             incorrectInputPassword.setText("Wrong password or email");
             incorrectInputPassword.setVisible(true);
         }

@@ -46,7 +46,7 @@ public class AnswerRowFactory {
 
         answerRow.setOnMouseClicked(event -> {
             textSetter.accept(answerDto.getAnswerText());
-            var textFade = new FadeTransition(Duration.millis(300), (Node) textSetter);
+            var textFade = new FadeTransition(Duration.millis(300), answerRow);
             textFade.setFromValue(0.5);
             textFade.setToValue(1);
             textFade.play();

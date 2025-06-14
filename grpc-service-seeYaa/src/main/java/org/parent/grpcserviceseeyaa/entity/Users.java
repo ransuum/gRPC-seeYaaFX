@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,6 +33,8 @@ public class Users {
 
     @Column(nullable = false)
     private String lastname;
+
+    private Set<String> roles;
 
     @Column(nullable = false)
     private String username;

@@ -3,11 +3,11 @@ package org.parent.grpcserviceseeyaa.configuration.letter;
 import com.google.protobuf.Empty;
 import com.seeYaa.proto.email.configuration.movedletter.MovedLetterConfigurationGrpc;
 import com.seeYaa.proto.email.configuration.movedletter.SetLetterTypeRequest;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.entity.MovedLetter;
-import org.parent.grpcserviceseeyaa.exception.NotFoundException;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.parent.grpcserviceseeyaa.repository.MovedLetterRepository;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
@@ -26,9 +26,13 @@ public class MovedLetterConfigurationImpl extends MovedLetterConfigurationGrpc.M
     @Transactional
     public void setLetterType(SetLetterTypeRequest request, StreamObserver<Empty> responseObserver) {
         final var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> Status.NOT_FOUND
+                        .withDescription("User not found")
+                        .asRuntimeException());
         final var letter = letterRepository.findById(request.getLetterId())
-                .orElseThrow(() -> new NotFoundException("Letter not found"));
+                .orElseThrow(() -> Status.NOT_FOUND
+                        .withDescription("Letter not found")
+                        .asRuntimeException());
 
         final var movedOpt = movedLetterRepository.findByLetterAndMovedBy(letter, user);
 

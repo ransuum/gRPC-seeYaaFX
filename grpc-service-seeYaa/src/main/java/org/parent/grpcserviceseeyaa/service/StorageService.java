@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.mapper.FilesMapper;
 import org.parent.grpcserviceseeyaa.repository.FilesRepository;
 import org.parent.grpcserviceseeyaa.repository.LetterRepository;
+import org.parent.grpcserviceseeyaa.security.rolechecker.Authorize;
 import org.springframework.grpc.server.service.GrpcService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
 
 
     @Override
+    @Authorize("hasRole('ROLE_USER')")
     public void uploadFile(UploadFileRequest request, StreamObserver<Empty> responseObserver) {
         final var letter = letterRepository.findById(request.getLetterId())
                 .orElseThrow(() -> Status.NOT_FOUND
@@ -42,6 +44,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     }
 
     @Override
+    @Authorize("hasRole('ROLE_USER')")
     @Transactional
     public void downloadFile(FileIdRequest request, StreamObserver<DownloadFileResponse> responseObserver) {
         org.parent.grpcserviceseeyaa.entity.Files file = filesRepository.findById(request.getFileId())
@@ -58,6 +61,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     }
 
     @Override
+    @Authorize("hasRole('ROLE_USER')")
     @Transactional
     public void getFilesByLetterId(LetterIdRequest request, StreamObserver<FilesList> responseObserver) {
         final var allByLetterId = filesRepository.findAllByLetterId(request.getLetterId())
@@ -70,6 +74,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     }
 
     @Override
+    @Authorize("hasRole('ROLE_USER')")
     @Transactional
     public void getFileMetadataByLetterId(LetterIdRequest request, StreamObserver<FileMetadataList> responseObserver) {
         final var rows = filesRepository.findAllByLetterId(request.getLetterId())
@@ -84,6 +89,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     }
 
     @Override
+    @Authorize("hasRole('ROLE_USER')")
     @Transactional
     public void getFileById(FileIdRequest request, StreamObserver<Files> responseObserver) {
         final var entity = filesRepository.findById(request.getFileId())
