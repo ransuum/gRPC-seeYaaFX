@@ -13,16 +13,11 @@ public class TimeProtoUtil {
     public static Timestamp toProto(LocalDateTime ldt) {
         if (ldt == null) return null;
         Instant instant = ldt.toInstant(ZoneOffset.UTC);
-        return Timestamp.newBuilder()
-                .setSeconds(instant.getEpochSecond())
-                .setNanos(instant.getNano())
-                .build();
+        return Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).setNanos(instant.getNano()).build();
     }
 
     public static LocalDateTime fromProto(Timestamp ts) {
         if (ts == null) return null;
-        return LocalDateTime.ofEpochSecond(ts.getSeconds(),
-                ts.getNanos(),
-                ZoneOffset.UTC);
+        return LocalDateTime.ofEpochSecond(ts.getSeconds(), ts.getNanos(), ZoneOffset.UTC);
     }
 }

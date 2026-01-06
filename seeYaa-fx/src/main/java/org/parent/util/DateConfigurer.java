@@ -16,11 +16,12 @@ public class DateConfigurer {
     public static String getDate(Timestamp timestamp) {
         if (timestamp == null) return null;
 
-        final LocalDateTime localDateTime = TimeProtoUtil.fromProto(timestamp);
+        var localDateTime = TimeProtoUtil.fromProto(timestamp);
 
         if (localDateTime.getMonth().equals(LocalDateTime.now().getMonth())
                 &&  localDateTime.getYear() == LocalDateTime.now().getYear()
-        && localDateTime.getDayOfMonth() == LocalDateTime.now().getDayOfMonth()) return localDateTime.format(formatterToday);
+                && localDateTime.getDayOfMonth() == LocalDateTime.now().getDayOfMonth())
+            return localDateTime.format(formatterToday);
 
         return localDateTime.format(formatterYesterday);
     }

@@ -1,13 +1,10 @@
 package org.parent.configuration.file;
 
-import lombok.NonNull;
+import org.jspecify.annotations.NullMarked;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
+import module java.base;
 
+@NullMarked
 public class PathMultipartFile implements MultipartFile {
     private final File file;
 
@@ -26,12 +23,12 @@ public class PathMultipartFile implements MultipartFile {
     }
 
     @Override
-    public byte @NonNull [] getBytes() throws IOException {
+    public byte[] getBytes() throws IOException {
         return Files.readAllBytes(file.toPath());
     }
 
     @Override
-    public @NonNull InputStream getInputStream() throws IOException {
+    public InputStream getInputStream() throws IOException {
         return new FileInputStream(file);
     }
 }

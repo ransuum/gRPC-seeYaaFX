@@ -12,10 +12,11 @@ import org.parent.grpcserviceseeyaa.repository.LetterRepository;
 import org.parent.grpcserviceseeyaa.repository.MovedLetterRepository;
 import org.parent.grpcserviceseeyaa.repository.UserRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-@Component
+@Service
 @RequiredArgsConstructor
 public class MovedLetterConfigurationImpl extends MovedLetterConfigurationGrpc.MovedLetterConfigurationImplBase {
     private final LetterRepository letterRepository;
@@ -25,16 +26,12 @@ public class MovedLetterConfigurationImpl extends MovedLetterConfigurationGrpc.M
     @Override
     @Transactional
     public void setLetterType(SetLetterTypeRequest request, StreamObserver<Empty> responseObserver) {
-        final var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("User not found")
-                        .asRuntimeException());
-        final var letter = letterRepository.findById(request.getLetterId())
-                .orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("Letter not found")
-                        .asRuntimeException());
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription("User not found").asRuntimeException());
+        var letter = letterRepository.findById(request.getLetterId())
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription("Letter not found").asRuntimeException());
 
-        final var movedOpt = movedLetterRepository.findByLetterAndMovedBy(letter, user);
+        var movedOpt = movedLetterRepository.findByLetterAndMovedBy(letter, user);
 
         movedOpt.ifPresentOrElse(existing -> {
             if (existing.getTypeOfLetter() == request.getType()) {
@@ -51,7 +48,7 @@ public class MovedLetterConfigurationImpl extends MovedLetterConfigurationGrpc.M
             }
         }, () -> {
             letter.setActiveLetter(Boolean.FALSE);
-            final var moved = MovedLetter.builder()
+            var moved = MovedLetter.builder()
                     .letter(letter)
                     .typeOfLetter(request.getType())
                     .movedBy(user)

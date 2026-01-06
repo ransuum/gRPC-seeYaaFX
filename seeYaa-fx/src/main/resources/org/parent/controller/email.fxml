@@ -1,138 +1,211 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="875.0" prefWidth="1309.0" stylesheets="@static/email.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.parent.controller.EmailController">
-   <AnchorPane fx:id="backHbox" layoutX="352.0" layoutY="185.0" prefHeight="658.0" prefWidth="920.0" style="-fx-background-color: #A5A5A5;">
-      <ScrollPane fitToWidth="true" layoutX="31.0" layoutY="19.0" prefHeight="620.0" prefWidth="858.0">
-         <VBox fx:id="hboxInsideInboxes" style="-fx-background-color: #A5A5A5;" />
-      </ScrollPane>
-   </AnchorPane>
-   <Button fx:id="write" layoutX="995.0" layoutY="133.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="83.0" text="Write">
-      <cursor>
-         <Cursor fx:constant="HAND" />
-      </cursor>
-      <effect>
-         <DropShadow />
-      </effect>
-      <graphic>
-         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@images/add.png" />
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="875.0" prefWidth="1309.0" stylesheets="@static/email.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.parent.controller.EmailController">
+
+   <!-- TOP HEADER -->
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="20.0" styleClass="header-bar"
+            BorderPane.alignment="CENTER">
+         <padding>
+            <Insets left="20.0" right="20.0"/>
+         </padding>
+         <!-- Logo -->
+         <ImageView fitHeight="40.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@images/email.png"/>
          </ImageView>
-      </graphic>
-   </Button>
-   <Text fx:id="emailOfAuthUser" layoutX="1110.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="email" textAlignment="CENTER" wrappingWidth="181.0">
-      <font>
-         <Font name="System Bold" size="14.0" />
-      </font>
-   </Text>
-   <AnchorPane fx:id="anc" layoutX="49.0" layoutY="185.0" prefHeight="181.0" prefWidth="264.0" style="-fx-background-color: #B1B1B1;">
-      <VBox alignment="TOP_CENTER" layoutY="3.0" prefHeight="176.0" prefWidth="277.0" stylesheets="@static/buttonOnMenu.css">
-         <Button fx:id="inboxes" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="29.0" prefWidth="270.0" text="   Inboxes" textFill="#584747">
-            <cursor>
-               <Cursor fx:constant="HAND" />
-            </cursor>
+
+         <Region HBox.hgrow="ALWAYS"/>
+
+         <!-- Search Bar Container -->
+         <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="45.0" prefWidth="500.0"
+               styleClass="search-container">
+            <ImageView fx:id="searchButton" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true"
+                       preserveRatio="true">
+               <HBox.margin>
+                  <Insets left="15.0" right="10.0"/>
+               </HBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND"/>
+               </cursor>
+               <Image url="@images/search.png"/>
+            </ImageView>
+            <TextField fx:id="search" prefHeight="40.0" prefWidth="400.0" promptText="Search in mail"
+                       styleClass="search-input" HBox.hgrow="ALWAYS"/>
+         </HBox>
+
+         <Region HBox.hgrow="ALWAYS"/>
+
+         <!-- User Profile Section -->
+         <HBox alignment="CENTER" spacing="15.0">
+            <StackPane>
+               <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                  <Image url="@images/user.png"/>
+               </ImageView>
+               <!-- Edit Profile Icon overlaid -->
+               <ImageView fx:id="editProfile" fitHeight="14.0" fitWidth="14.0" pickOnBounds="true"
+                          preserveRatio="true" StackPane.alignment="BOTTOM_RIGHT">
+                  <cursor>
+                     <Cursor fx:constant="HAND"/>
+                  </cursor>
+                  <Image url="@images/edit-text.png"/>
+               </ImageView>
+            </StackPane>
+
+            <VBox alignment="CENTER_LEFT">
+               <Text fx:id="emailOfAuthUser" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="user-email-text"
+                     text="user@example.com"/>
+               <Button fx:id="exit" mnemonicParsing="false" onAction="#exit" styleClass="logout-link"
+                       text="Sign out">
+                  <cursor>
+                     <Cursor fx:constant="HAND"/>
+                  </cursor>
+               </Button>
+            </VBox>
+         </HBox>
+      </HBox>
+   </top>
+
+   <!-- LEFT SIDEBAR -->
+   <left>
+      <VBox prefHeight="200.0" prefWidth="240.0" spacing="10.0" styleClass="sidebar" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="20.0" left="15.0" right="15.0" top="20.0"/>
+         </padding>
+         <!-- COMPOSE BUTTON -->
+         <Button fx:id="write" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="160.0"
+                 styleClass="compose-btn" text="Compose">
             <graphic>
-               <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
-                  <Image url="@images/inboxes.png" />
+               <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                  <Image url="@images/add.png"/>
                </ImageView>
             </graphic>
-         </Button>
-         <Button fx:id="sent" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="29.0" prefWidth="270.0" text="    Sent" textFill="#584747">
             <cursor>
-               <Cursor fx:constant="HAND" />
+               <Cursor fx:constant="HAND"/>
             </cursor>
-            <graphic>
-               <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
-                  <Image url="@images/sent.png" />
-               </ImageView>
-            </graphic>
+            <VBox.margin>
+               <Insets bottom="20.0"/>
+            </VBox.margin>
          </Button>
-         <Button fx:id="spam" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="29.0" prefWidth="270.0" text="   Spam" textFill="#584747">
-            <cursor>
-               <Cursor fx:constant="HAND" />
-            </cursor>
-            <graphic>
-               <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
-                  <Image url="@images/spam-mail.png" />
-               </ImageView>
-            </graphic>
-         </Button>
-         <Button fx:id="garbage" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="29.0" prefWidth="270.0" text="  Garbage" textFill="#584747">
-            <cursor>
-               <Cursor fx:constant="HAND" />
-            </cursor>
-            <graphic>
-               <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
-                  <Image url="@images/rubbish-bin.png" />
-               </ImageView>
-            </graphic>
-         </Button>
+
+         <!-- NAVIGATION MENU -->
+         <VBox spacing="5.0">
+            <!-- Inbox Row with Counter -->
+            <HBox alignment="CENTER_LEFT" styleClass="menu-item-container">
+               <Button fx:id="inboxes" alignment="BASELINE_LEFT" graphicTextGap="20.0"
+                       maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0"
+                       styleClass="menu-btn" text="Inbox" HBox.hgrow="ALWAYS">
+                  <graphic>
+                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@images/inboxes.png"/>
+                     </ImageView>
+                  </graphic>
+                  <cursor>
+                     <Cursor fx:constant="HAND"/>
+                  </cursor>
+               </Button>
+               <Text fx:id="inboxCount" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="badge-text" text="0">
+                  <HBox.margin>
+                     <Insets right="10.0"/>
+                  </HBox.margin>
+               </Text>
+            </HBox>
+
+            <Button fx:id="sent" alignment="BASELINE_LEFT" graphicTextGap="20.0" maxWidth="1.7976931348623157E308"
+                    mnemonicParsing="false" prefHeight="40.0" styleClass="menu-btn" text="Sent">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@images/sent.png"/>
+                  </ImageView>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND"/>
+               </cursor>
+            </Button>
+
+            <Button fx:id="spam" alignment="BASELINE_LEFT" graphicTextGap="20.0" maxWidth="1.7976931348623157E308"
+                    mnemonicParsing="false" prefHeight="40.0" styleClass="menu-btn" text="Spam">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@images/spam-mail.png"/>
+                  </ImageView>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND"/>
+               </cursor>
+            </Button>
+
+            <Button fx:id="garbage" alignment="BASELINE_LEFT" graphicTextGap="20.0" maxWidth="1.7976931348623157E308"
+                    mnemonicParsing="false" prefHeight="40.0" styleClass="menu-btn" text="Trash">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@images/rubbish-bin.png"/>
+                  </ImageView>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND"/>
+               </cursor>
+            </Button>
+         </VBox>
       </VBox>
-   </AnchorPane>
-   <AnchorPane layoutX="282.0" layoutY="126.0" prefHeight="32.0" prefWidth="239.0" />
-   <Button fx:id="exit" layoutX="1183.0" layoutY="132.0" mnemonicParsing="false" onAction="#exit" text="Exit">
-      <cursor>
-         <Cursor fx:constant="HAND" />
-      </cursor>
-   </Button>
-   <ImageView fitHeight="69.0" fitWidth="74.0" layoutX="1166.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
-      <Image url="@images/user.png" />
-   </ImageView>
-   <ImageView fx:id="editProfile" fitHeight="19.0" fitWidth="18.0" layoutX="1241.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
-      <cursor>
-         <Cursor fx:constant="HAND" />
-      </cursor>
-      <Image url="@images/edit-text.png" />
-   </ImageView>
-   <ImageView fitHeight="140.0" fitWidth="208.0" layoutX="59.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
-      <Image url="@images/email.png" />
-   </ImageView>
-   <Button fx:id="spambutton" layoutX="623.0" layoutY="152.0" mnemonicParsing="false" onAction="#spam" prefHeight="31.0" prefWidth="35.0" style="-fx-background-color: #D9D9D9;" stylesheets="@static/email.css" textFill="#461f8d" visible="false">
-      <cursor>
-         <Cursor fx:constant="HAND" />
-      </cursor>
-      <graphic>
-         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@images/spam.png" />
-         </ImageView>
-      </graphic>
-   </Button>
-   <Button fx:id="deleteButton" layoutX="582.0" layoutY="152.0" mnemonicParsing="false" onAction="#delete" prefHeight="27.0" prefWidth="35.0" style="-fx-background-color: #D9D9D9;" stylesheets="@static/email.css" textFill="#3e25a4" visible="false">
-      <font>
-         <Font size="15.0" />
-      </font>
-      <cursor>
-         <Cursor fx:constant="HAND" />
-      </cursor>
-      <graphic>
-         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@images/delete.png" />
-         </ImageView>
-      </graphic>
-   </Button>
-   <AnchorPane layoutX="295.0" layoutY="92.0" prefHeight="58.0" prefWidth="251.0">
-      <children>
-         <TextField fx:id="search" layoutX="58.0" layoutY="30.0" minWidth="209.0" prefHeight="40.0" prefWidth="228.0" promptText="Search" style="-fx-background-color: #645A5A;" />
-         <ImageView fx:id="searchButton" fitHeight="40.0" fitWidth="45.0" layoutX="251.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
-            <cursor>
-               <Cursor fx:constant="HAND" />
-            </cursor>
-            <Image url="@images/search.png" />
-         </ImageView>
-      </children>
-   </AnchorPane>
-   <DatePicker layoutX="758.0" layoutY="161.0" style="-fx-background-color: #B1B1B1;" />
-   <Text fx:id="inboxCount" fill="#357c2d" layoutX="191.0" layoutY="212.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
-</AnchorPane>
+   </left>
+
+   <!-- MAIN CONTENT AREA -->
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" styleClass="main-content"
+            BorderPane.alignment="CENTER"><!-- TOOLBAR (Actions) -->
+         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="15.0" styleClass="toolbar">
+            <padding>
+               <Insets left="20.0" right="20.0"/>
+            </padding>
+            <!-- Only visible when selected (controlled by your code) -->
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#delete" styleClass="icon-action-btn"
+                    visible="false">
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@images/delete.png"/>
+                  </ImageView>
+               </graphic>
+            </Button>
+
+            <Button fx:id="spambutton" mnemonicParsing="false" onAction="#spam" styleClass="icon-action-btn"
+                    visible="false">
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@images/spam.png"/>
+                  </ImageView>
+               </graphic>
+            </Button>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <DatePicker prefWidth="150.0" promptText="Filter Date" styleClass="filter-date"/>
+         </HBox>
+
+         <!-- EMAIL LIST SCROLL PANE -->
+         <ScrollPane fitToHeight="true" fitToWidth="true" styleClass="email-scroll-pane" VBox.vgrow="ALWAYS">
+            <!-- This VBox will be populated by your Controller -->
+            <VBox fx:id="hboxInsideInboxes" spacing="2.0" styleClass="email-list-container">
+               <padding>
+                  <Insets bottom="10.0" top="10.0"/>
+               </padding>
+            </VBox>
+         </ScrollPane>
+      </VBox>
+   </center>
+</BorderPane>

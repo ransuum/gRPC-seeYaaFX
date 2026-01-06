@@ -27,15 +27,11 @@ public class AnswerService extends AnswerServiceGrpc.AnswerServiceImplBase {
     @Override
     @Authorize("hasRole('ROLE_USER')")
     public void createAnswer(CreateAnswerRequest request, StreamObserver<Empty> responseObserver) {
-        final var letter = letterRepo.findById(request.getLetterId())
-                .orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("Letter not found")
-                        .asRuntimeException());
+        var letter = letterRepo.findById(request.getLetterId())
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription("Letter not found").asRuntimeException());
 
-        final var users = usersRepo.findByEmail(securityService.getCurrentUserEmail())
-                .orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("You are not logged in")
-                        .asRuntimeException());
+        var users = usersRepo.findByEmail(securityService.getCurrentUserEmail())
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription("You are not logged in").asRuntimeException());
 
         answerRepository.save(Answer.builder()
                 .answerText(request.getText())

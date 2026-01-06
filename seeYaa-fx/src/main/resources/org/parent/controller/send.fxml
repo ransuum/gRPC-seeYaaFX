@@ -6,63 +6,62 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="510.0" prefWidth="773.0" stylesheets="@static/sendLetter.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.parent.controller.SendLetterController">
-   <TextArea fx:id="text" layoutY="70.0" prefHeight="387.0" prefWidth="798.0" promptText=" Text">
+<VBox prefHeight="550.0" prefWidth="773.0" styleClass="compose-window" stylesheets="@static/sendLetter.css"
+      xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.parent.controller.SendLetterController">
+
+   <VBox>
+      <padding>
+         <Insets left="10.0" right="10.0"/>
+      </padding>
+      <TextField fx:id="toWhom" prefHeight="45.0" promptText="Recipients" styleClass="header-field"/>
+      <TextField fx:id="topic" prefHeight="45.0" promptText="Subject" styleClass="header-field"/>
+   </VBox>
+
+   <TextArea fx:id="text" prefHeight="200.0" prefWidth="200.0" promptText="Type your message here..."
+             styleClass="message-body" wrapText="true" VBox.vgrow="ALWAYS">
       <font>
-         <Font name="Century" size="14.0" />
+         <Font size="14.0"/>
       </font>
+      <VBox.margin>
+         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+      </VBox.margin>
    </TextArea>
-   <TextField fx:id="toWhom" prefHeight="35.0" prefWidth="798.0" promptText="To whom">
-      <opaqueInsets>
-         <Insets />
-      </opaqueInsets>
-      <font>
-         <Font name="Century" size="15.0" />
-      </font>
-   </TextField>
-   <TextField fx:id="topic" layoutY="35.0" prefHeight="35.0" prefWidth="798.0" promptText="Topic">
-      <opaqueInsets>
-         <Insets />
-      </opaqueInsets>
-      <font>
-         <Font name="Century" size="15.0" />
-      </font>
-   </TextField>
-   <TextField fx:id="hiding" editable="false" layoutX="643.0" layoutY="4.0" visible="false" />
-   <Button fx:id="sendLetter" layoutX="744.0" layoutY="465.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#sendLetter" prefHeight="40.0" prefWidth="42.0">
-      <font>
-         <Font name="System Bold" size="15.0" />
-      </font>
-      <effect>
-         <DropShadow />
-      </effect>
-      <cursor>
-         <Cursor fx:constant="HAND" />
-      </cursor>
-      <graphic>
-         <ImageView fitHeight="25.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@images/send.png" />
-         </ImageView>
-      </graphic>
-   </Button>
-   <Button fx:id="attachFile" layoutX="694.0" layoutY="464.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="29.0">
-      <font>
-         <Font name="System Bold" size="15.0" />
-      </font>
-      <cursor>
-         <Cursor fx:constant="HAND" />
-      </cursor>
-      <graphic>
-         <ImageView fitHeight="24.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@images/attachment.png" />
-         </ImageView>
-      </graphic>
-   </Button>
-   <Label fx:id="attachmentLabel" layoutX="30.0" layoutY="475.0" />
-</AnchorPane>
+
+   <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="10.0" styleClass="footer-bar">
+      <padding>
+         <Insets bottom="10.0" left="15.0" right="15.0" top="10.0"/>
+      </padding>
+      <Button fx:id="sendLetter" mnemonicParsing="false" onAction="#sendLetter" prefHeight="36.0" prefWidth="100.0"
+              styleClass="send-button" text="Send">
+         <cursor>
+            <Cursor fx:constant="HAND"/>
+         </cursor>
+      </Button>
+      <Button fx:id="attachFile" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" styleClass="icon-button">
+         <cursor>
+            <Cursor fx:constant="HAND"/>
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <Image url="@images/attachment.png"/>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Label fx:id="attachmentLabel" styleClass="file-label" textFill="#666666">
+         <HBox.margin>
+            <Insets left="5.0"/>
+         </HBox.margin>
+      </Label>
+      <Region HBox.hgrow="ALWAYS"/>
+      <TextField fx:id="hiding" editable="false" visible="false"/>
+   </HBox>
+
+</VBox>

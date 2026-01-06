@@ -26,17 +26,20 @@ public class FileUiUtils {
     }
 
     public static String formatFileSize(Long size) {
-        if (size < 1024) return size + " B";
-        else if (size < 1024 * 1024) return String.format("%.1f KB", size / 1024.0);
-        else if (size < 1024 * 1024 * 1024) return String.format("%.1f MB", size / (1024.0 * 1024));
-        else return String.format("%.1f GB", size / (1024.0 * 1024 * 1024));
+        return switch (size) {
+            case Long s when s < 1024L -> size + " B";
+            case Long s when s < 1024L * 1024L -> String.format("%.1f KB", size / 1024.0);
+            case Long s when s < 1024L * 1024L * 1024L -> String.format("%.1f MB", size / (1024.0 * 1024));
+            default -> String.format("%.1f GB", size / (1024.0 * 1024 * 1024));
+        };
     }
 
     public static StackPane createAvatar(String firstName) {
-        final var avatar = new StackPane();
+        var avatar = new StackPane();
         avatar.getStyleClass().add("avatar");
-        final var initials = new Label(firstName.substring(0, 1).toUpperCase());
+        var initials = new Label(firstName.substring(0, 1).toUpperCase());
         initials.getStyleClass().add("avatar-initials");
+
         avatar.getChildren().add(initials);
         return avatar;
     }

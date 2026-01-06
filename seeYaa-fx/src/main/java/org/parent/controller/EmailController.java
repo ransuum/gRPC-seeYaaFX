@@ -10,6 +10,7 @@ import com.seeYaa.proto.email.service.users.UsersServiceGrpc;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -20,6 +21,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -35,42 +37,25 @@ import org.parent.util.choicesofletters.Choice;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import module java.base;
 
 @Slf4j
 @Component
 public class EmailController {
-    @FXML
-    @Getter
-    @Setter
-    private Text emailOfAuthUser;
-    @FXML
-    private Button sent;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button inboxes;
-    @FXML
-    private Button spambutton;
-    @FXML
-    private Button spam;
-    @FXML
-    private Button garbage;
-    @FXML
-    private Button write;
-    @FXML
-    private ImageView searchButton;
-    @FXML
-    private TextField search;
-    @FXML
-    @Getter
-    private VBox hboxInsideInboxes;
-    @FXML
-    private ImageView editProfile;
-    @FXML
-    private Text inboxCount;
+
+    @FXML @Getter @Setter private Text emailOfAuthUser;
+    @FXML private Button sent;
+    @FXML private Button deleteButton;
+    @FXML private Button inboxes;
+    @FXML private Button spambutton;
+    @FXML private Button spam;
+    @FXML private Button garbage;
+    @FXML private Button write;
+    @FXML private ImageView searchButton;
+    @FXML private TextField search;
+    @FXML @Getter private VBox hboxInsideInboxes;
+    @FXML private ImageView editProfile;
+    @FXML private Text inboxCount;
 
     private static final String SELECTED = "selected";
 
@@ -104,8 +89,8 @@ public class EmailController {
     @FXML
     public void initialize() {
         this.emailOfAuthUser.setText(securityService.getCurrentUserEmail());
-        write.setOnMouseClicked(mouseEvent -> write());
-        editProfile.setOnMouseClicked(mouseEvent -> editProfile());
+        write.setOnMouseClicked(_ -> write());
+        editProfile.setOnMouseClicked(_ -> editProfile());
 
         addToBox(inboxes, 1, TypeOfLetter.INBOXES);
         addToBox(sent, 2, TypeOfLetter.SENT);
@@ -113,11 +98,12 @@ public class EmailController {
         addToBox(garbage, 4, TypeOfLetter.GARBAGE);
         registerSearchHandlers();
 
-        inboxCount.setText(String.valueOf(
-                letterService.countOfInboxesLetter(
-                        LetterByEmail.newBuilder().setByEmail(emailOfAuthUser.getText()).build()
-                ).getCount()
+        inboxCount.setText(String.valueOf(letterService.countOfInboxesLetter(
+                LetterByEmail.newBuilder().setByEmail(emailOfAuthUser.getText()).build()).getCount()
         ));
+
+        resetButtonStyles();
+        inboxes.getStyleClass().add(SELECTED);
     }
 
     @FXML
@@ -147,27 +133,28 @@ public class EmailController {
         searchButton.setOnMouseClicked(event -> {
             hboxInsideInboxes.getChildren().clear();
 
-            if (inboxes.getStyleClass().contains(SELECTED))
+            if (inboxes.getStyleClass().contains(SELECTED)) {
                 letterService.findAllInboxByTopic(TopicSearchRequestTo.newBuilder()
                                 .setTopic(search.getText())
                                 .setUserToEmail(emailOfAuthUser.getText())
                                 .build()).getLettersList()
                         .forEach(letter
                                 -> addLetterToUI(letter, 1));
-            else if (sent.getStyleClass().contains(SELECTED))
+            } else if (sent.getStyleClass().contains(SELECTED)) {
                 letterService.findAllSentByTopic(TopicSearchRequestBy.newBuilder()
                                 .setTopic(search.getText())
                                 .setUserByEmail(emailOfAuthUser.getText())
                                 .build()).getLettersList()
                         .forEach(letter
                                 -> addLetterToUI(letter, 2));
+            }
 
         });
     }
 
     private void write() {
         try {
-            final var fxmlLoader = new FXMLLoader(getClass().getResource("send.fxml"));
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("send.fxml"));
             fxmlLoader.setControllerFactory(springContext::getBean);
             root = fxmlLoader.load();
             SendLetterController controller = fxmlLoader.getController();
@@ -200,8 +187,8 @@ public class EmailController {
             scene = new Scene(this.root);
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/edit.css")).toExternalForm());
             stage.centerOnScreen();
-            stage.widthProperty().addListener((obs, oldVal, newVal) -> this.stage.centerOnScreen());
-            stage.heightProperty().addListener((obs, oldVal, newVal) -> this.stage.centerOnScreen());
+            stage.widthProperty().addListener((_, _, _) -> this.stage.centerOnScreen());
+            stage.heightProperty().addListener((_, _, _) -> this.stage.centerOnScreen());
             stage.setScene(this.scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
@@ -211,50 +198,75 @@ public class EmailController {
     }
 
     public void addToBox(Button button, int index, TypeOfLetter choice) {
-        button.setOnMouseClicked(event -> {
+        button.setOnMouseClicked(_ -> {
             resetButtonStyles();
             hboxInsideInboxes.getChildren().clear();
             button.getStyleClass().add(SELECTED);
 
-            final var letters = typeOfLetterChoices.get(choice)
-                    .addToBox(index, emailOfAuthUser.getText());
+            var letters = typeOfLetterChoices.get(choice).addToBox(index, emailOfAuthUser.getText());
 
             Optional.of(letters)
                     .filter(list -> !list.isEmpty())
                     .ifPresentOrElse(
                             list -> list.forEach(letter -> addLetterToUI(letter, index)),
-                            () -> hboxInsideInboxes.getChildren().add(new Text("No letters found in this category"))
+                            () -> {
+                                final Text emptyText = new Text("No conversations in " + button.getText());
+                                emptyText.setStyle("-fx-fill: #5f6368; -fx-font-size: 14px; -fx-padding: 20;");
+                                final VBox container = new VBox(emptyText);
+                                container.setAlignment(Pos.CENTER);
+                                container.setPadding(new Insets(30));
+                                hboxInsideInboxes.getChildren().add(container);
+                            }
                     );
         });
     }
 
     public void addLetterToUI(Letter letter, int function) {
-        final var textField = LetterUIFactory.createTextField(letter, function);
-        if (letter.getWatched()) textField.getStylesheets()
-                .add(Objects.requireNonNull(getClass().getResource("static/letters-watched.css")).toExternalForm());
-        else textField.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/letters-unwatched.css")).toExternalForm());
-        final TextField textField1 = new TextField();
-        textField1.setAlignment(Pos.CENTER);
-        textField1.setEditable(false);
-        textField1.getStylesheets().add(Objects.requireNonNull(getClass().getResource("static/date.css")).toExternalForm());
-        textField1.setText(FieldUtil.refractorDate(letter.getCreatedAt()));
+        final HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        hBox.setId(letter.getId());
+
+        hBox.getStyleClass().add("email-list-item");
+
+        if (letter.getWatched()) {
+            hBox.getStyleClass().add("email-read");
+        } else {
+            hBox.getStyleClass().add("email-unread");
+        }
 
         final CheckBox checkBox = new CheckBox();
-        checkBox.setOnAction(event -> {
-            textField.setDisable(checkBox.isSelected());
-            textField1.setDisable(checkBox.isSelected());
+
+        final TextField mainTextField = LetterUIFactory.createTextField(letter, function);
+        mainTextField.setEditable(false);
+        mainTextField.getStyleClass().add("email-text-field");
+
+        HBox.setHgrow(mainTextField, Priority.ALWAYS);
+        mainTextField.setMaxWidth(Double.MAX_VALUE);
+
+        final TextField dateTextField = new TextField();
+        dateTextField.setEditable(false);
+        dateTextField.setText(FieldUtil.refractorDate(letter.getCreatedAt()));
+        dateTextField.getStyleClass().add("email-date-field");
+        dateTextField.setMinWidth(100);
+        dateTextField.setPrefWidth(100);
+
+        checkBox.setOnAction(_ -> {
+            if(checkBox.isSelected()) {
+                hBox.setStyle("-fx-background-color: #c2dbff;");
+            } else {
+                hBox.setStyle("");
+            }
             updateDeleteButtonVisibility();
         });
 
-        final HBox hBox = new HBox(10);
-        hBox.setAlignment(Pos.CENTER_LEFT);
-        hBox.getChildren().addAll(checkBox, textField, textField1);
-
-        textField.setOnMouseClicked(textFieldEvent -> {
+        mainTextField.setOnMouseClicked(_ -> {
+            if (!checkBox.isSelected()) handleTextFieldClick(letter.getId(), function);
+        });
+        dateTextField.setOnMouseClicked(e -> {
             if (!checkBox.isSelected()) handleTextFieldClick(letter.getId(), function);
         });
 
-        hBox.setId(letter.getId());
+        hBox.getChildren().addAll(checkBox, mainTextField, dateTextField);
         hboxInsideInboxes.getChildren().add(hBox);
     }
 
@@ -279,7 +291,7 @@ public class EmailController {
 
     private void processSelectedLetters(TypeOfLetter typeOfLetter) {
         try {
-            final List<HBox> selectedBoxes = new LinkedList<>();
+            List<HBox> selectedBoxes = new LinkedList<>();
             hboxInsideInboxes.getChildren().forEach(node -> {
                 if (node instanceof HBox hBox) {
                     CheckBox checkBox = (CheckBox) hBox.getChildren().getFirst();
@@ -287,19 +299,14 @@ public class EmailController {
                 }
             });
 
-            final var email = emailOfAuthUser.getText();
+            var email = emailOfAuthUser.getText();
             selectedBoxes.forEach(hBox -> {
                 final String letterId = hBox.getId();
                 switch (typeOfLetter) {
-                    case SPAM -> letterMoveService.setLetterType(SetLetterTypeRequest.newBuilder()
+                    case SPAM, GARBAGE -> letterMoveService.setLetterType(SetLetterTypeRequest.newBuilder()
                             .setEmail(email)
                             .setLetterId(letterId)
-                            .setType(TypeOfLetter.SPAM)
-                            .build());
-                    case GARBAGE -> letterMoveService.setLetterType(SetLetterTypeRequest.newBuilder()
-                            .setEmail(email)
-                            .setLetterId(letterId)
-                            .setType(TypeOfLetter.GARBAGE)
+                            .setType(typeOfLetter)
                             .build());
                     default -> letterService.deleteLetterById(LetterIdRequest.newBuilder().setId(letterId).build());
                 }
@@ -315,7 +322,7 @@ public class EmailController {
 
     private void handleTextFieldClick(String letterId, int function) {
         if (openStages.containsKey(letterId)) {
-            Stage existingStage = openStages.get(letterId);
+            var existingStage = openStages.get(letterId);
             if (existingStage.isShowing()) {
                 existingStage.requestFocus();
                 return;
@@ -347,10 +354,8 @@ public class EmailController {
     }
 
     private void updateInboxCounter() {
-        inboxCount.setText(String.valueOf(
-                letterService.countOfInboxesLetter(
-                        LetterByEmail.newBuilder().setByEmail(emailOfAuthUser.getText()).build()
-                ).getCount()
+        inboxCount.setText(String.valueOf(letterService.countOfInboxesLetter(
+                LetterByEmail.newBuilder().setByEmail(emailOfAuthUser.getText()).build()).getCount()
         ));
     }
 }

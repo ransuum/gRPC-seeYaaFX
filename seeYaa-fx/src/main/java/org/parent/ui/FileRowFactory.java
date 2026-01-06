@@ -24,30 +24,30 @@ public class FileRowFactory {
             Consumer<FileMetadata> onDownloadClick,
             Supplier<Stage> stageSupplier
     ) {
-        final var fileRow = new HBox();
+        var fileRow = new HBox();
         fileRow.getStyleClass().add("file-row");
         fileRow.setSpacing(10);
         fileRow.setAlignment(Pos.CENTER_LEFT);
         fileRow.setMinHeight(40);
 
-        final var fileIcon = FileUiUtils.createFileTypeIcon(fileMetadata.getType());
+        var fileIcon = FileUiUtils.createFileTypeIcon(fileMetadata.getType());
 
-        final var fileInfo = new VBox(5);
+        var fileInfo = new VBox(5);
         HBox.setHgrow(fileInfo, Priority.ALWAYS);
 
-        final var nameLabel = new Label(fileMetadata.getName());
+        var nameLabel = new Label(fileMetadata.getName());
         nameLabel.getStyleClass().add("file-name-label");
         nameLabel.setWrapText(true);
 
-        final var sizeLabel = new Label(FileUiUtils.formatFileSize(fileMetadata.getSize()));
+        var sizeLabel = new Label(FileUiUtils.formatFileSize(fileMetadata.getSize()));
         sizeLabel.getStyleClass().add("file-size-label");
 
         fileInfo.getChildren().addAll(nameLabel, sizeLabel);
 
-        final Trio<HBox, Button, ProgressIndicator> object = createObjects();
-        final var downloadButton = object.second();
-        final var progressIndicator = object.third();
-        final var buttonBox = object.first();
+        Trio<HBox, Button, ProgressIndicator> object = createObjects();
+        var downloadButton = object.second();
+        var progressIndicator = object.third();
+        var buttonBox = object.first();
 
         downloadButton.setOnAction(e -> {
             progressIndicator.setVisible(true);
@@ -62,14 +62,14 @@ public class FileRowFactory {
     }
 
     private static Trio<HBox, Button, ProgressIndicator> createObjects() {
-        final var downloadButton = new Button("↓");
+        var downloadButton = new Button("↓");
         downloadButton.getStyleClass().add("download-button");
 
-        final var progressIndicator = new ProgressIndicator();
+        var progressIndicator = new ProgressIndicator();
         progressIndicator.setMaxSize(24, 24);
         progressIndicator.setVisible(false);
 
-        final var buttonBox = new HBox(5);
+        var buttonBox = new HBox(5);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.getChildren().addAll(progressIndicator, downloadButton);
         return new Trio<>(buttonBox, downloadButton, progressIndicator);

@@ -1,107 +1,103 @@
+/* 1. Main Background */
 .root {
-    -fx-background-color: #A5A5A5;
+    /* A nice modern purple-blue gradient */
+    -fx-background-color: linear-gradient(to bottom right, #e0eafc, #cfdef3);
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
-#labelLogin {
-    -fx-text-fill: #584747;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 1);
-    -fx-transition: all 0.3s ease-out;
+/* 2. The White Card Container */
+.login-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    /* Soft drop shadow to make it pop */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 20, 0, 0, 5);
 }
 
-#labelLogin:hover {
+/* 3. Header Text */
+.header-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+/* 4. Input Fields */
+.input-field {
+    -fx-background-color: #f1f3f5;
+    -fx-background-radius: 8;
+    -fx-border-width: 0;
+    -fx-text-fill: #333333;
+    -fx-prompt-text-fill: #adb5bd;
+    -fx-font-size: 13px;
+    -fx-padding: 10 15;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.input-field:focused {
+    -fx-background-color: white;
+    /* A subtle ring border on focus */
+    -fx-border-color: #a6c0fe;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(166, 192, 254, 0.4), 8, 0, 0, 2);
+}
+
+/* 5. Error Labels */
+.error-label {
+    -fx-text-fill: #ff6b6b;
+    -fx-font-size: 11px;
+    -fx-padding: 2 0 5 5;
+}
+
+/* 6. The Circle Action Button */
+.action-button {
+    /* Gradient Button */
+    -fx-background-color: linear-gradient(to right, #6a11cb, #2575fc);
+    -fx-background-radius: 100; /* Makes it a circle */
+    -fx-effect: dropshadow(gaussian, rgba(37, 117, 252, 0.3), 10, 0, 0, 4);
+    -fx-transition: all 0.25s ease;
+}
+
+.action-button:hover {
     -fx-scale-x: 1.1;
     -fx-scale-y: 1.1;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 2);
-}
-
-.text-field, .password-field {
-    -fx-background-color: #D9D9D9;
-    -fx-background-radius: 12px;
-    -fx-border-width: 0px;
-    -fx-padding: 8px 12px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
-    -fx-transition: all 0.2s ease-out;
-}
-
-.text-field:hover, .password-field:hover {
-    -fx-background-color: derive(#D9D9D9, 5%);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 6, 0, 0, 2);
-    -fx-translate-x: 2;
-}
-
-.text-field:focused, .password-field:focused {
-    -fx-background-color: derive(#D9D9D9, 10%);
-    -fx-effect: dropshadow(gaussian, rgba(186,167,217,0.4), 8, 0, 0, 2);
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
-}
-
-.button {
-    -fx-background-color: #3F3131;
-    -fx-background-radius: 13px;
-    -fx-font-family: Inter;
-    -fx-text-fill: #ddd2ec;
-    -fx-padding: 8px 16px;
+    -fx-effect: dropshadow(gaussian, rgba(37, 117, 252, 0.5), 15, 0, 0, 5);
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
-    -fx-transition: all 0.2s ease-out;
 }
 
-.button:hover {
-    -fx-background-color: #baa7d9;
-    -fx-text-fill: black;
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 3);
-}
-
-.button:pressed {
-    -fx-background-color: black;
-    -fx-text-fill: #baa7d9;
+.action-button:pressed {
+    -fx-background-color: linear-gradient(to right, #5f0fb6, #1e62d4);
     -fx-scale-x: 0.95;
     -fx-scale-y: 0.95;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 1);
 }
 
-.button .image-view {
-    -fx-transition: all 0.3s ease-out;
+/* Make the icon inside the button white (if it's a transparent png) */
+/* If your image is black, you might need a white version, or use -fx-effect: null */
+.action-button ImageView {
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 2, 0, 0, 0);
 }
 
-.button:hover .image-view {
-    -fx-rotate: 10;
-}
-
-#noHaveAcc {
-    -fx-text-fill: #202124;
+/* 7. Sign Up Link */
+.link-text {
+    -fx-fill: #2575fc;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
     -fx-cursor: hand;
-    -fx-transition: all 0.2s ease-out;
+    -fx-underline: false;
+    -fx-transition: all 0.2s;
 }
 
-#noHaveAcc:hover {
-    -fx-fill: #584747;
-    -fx-scale-x: 1.1;
-    -fx-scale-y: 1.1;
+.link-text:hover {
+    -fx-fill: #1a54b9;
     -fx-underline: true;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 1);
 }
 
-#incorrectInputPassword, #incorrectInputEmail {
-    -fx-text-fill: #eb000094;
-    -fx-effect: dropshadow(gaussian, rgba(235,0,0,0.2), 4, 0, 0, 1);
-    -fx-opacity: 0.95;
+/* Optional: Entry Animation */
+.login-card {
+    -fx-translate-y: 0;
+    -fx-opacity: 1;
+    -fx-animation: slideIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.root {
-    -fx-animation: fadeIn 0.5s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        -fx-opacity: 0;
-        -fx-translate-y: -20;
-    }
-    to {
-        -fx-opacity: 1;
-        -fx-translate-y: 0;
-    }
-}
+/* Note: CSS Keyframes are limited in JavaFX 8/11/17 CSS. 
+   If animations don't work via pure CSS, usually you do them in Java Controller.
+   But simple transitions on hover work great. */

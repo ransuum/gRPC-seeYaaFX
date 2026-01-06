@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class AlertWindow {
 
     public static void showAlert(Alert.AlertType alertType, String title, String message) {
-        final Alert alert = new Alert(alertType);
+        var alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setContentText(message);
         alert.showAndWait();

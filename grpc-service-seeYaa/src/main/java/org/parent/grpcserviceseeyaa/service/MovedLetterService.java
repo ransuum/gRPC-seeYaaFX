@@ -23,7 +23,7 @@ public class MovedLetterService extends MovedLetterServiceGrpc.MovedLetterServic
     @Authorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
     public void getSpamLetters(EmailRequest request, StreamObserver<LetterList> responseObserver) {
-        final var letters = letterRepository.findAllLettersMovedByUser(request.getEmail(), TypeOfLetter.SPAM)
+        var letters = letterRepository.findAllLettersMovedByUser(request.getEmail(), TypeOfLetter.SPAM)
                 .stream()
                 .map(LetterMapper.INSTANCE::toLetterProto)
                 .toList();
@@ -37,7 +37,7 @@ public class MovedLetterService extends MovedLetterServiceGrpc.MovedLetterServic
     @Authorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
     public void getGarbageLetters(EmailRequest request, StreamObserver<LetterList> responseObserver) {
-        final var letters = letterRepository.findAllLettersMovedByUser(request.getEmail(), TypeOfLetter.GARBAGE)
+        var letters = letterRepository.findAllLettersMovedByUser(request.getEmail(), TypeOfLetter.GARBAGE)
                 .stream()
                 .map(LetterMapper.INSTANCE::toLetterProto)
                 .toList();
@@ -50,7 +50,7 @@ public class MovedLetterService extends MovedLetterServiceGrpc.MovedLetterServic
     @Authorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
     public void getSentLetters(EmailRequest request, StreamObserver<LetterList> responseObserver) {
-        final var letters = letterRepository.findSentActiveByUser(request.getEmail())
+        var letters = letterRepository.findSentActiveByUser(request.getEmail())
                 .stream()
                 .map(LetterMapper.INSTANCE::toLetterProto)
                 .toList();
@@ -62,7 +62,7 @@ public class MovedLetterService extends MovedLetterServiceGrpc.MovedLetterServic
     @Authorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
     public void getInboxLetters(EmailRequest request, StreamObserver<LetterList> responseObserver) {
-        final var letters = letterRepository.findInboxActiveByUser(request.getEmail())
+        var letters = letterRepository.findInboxActiveByUser(request.getEmail())
                 .stream()
                 .map(LetterMapper.INSTANCE::toLetterProto)
                 .toList();

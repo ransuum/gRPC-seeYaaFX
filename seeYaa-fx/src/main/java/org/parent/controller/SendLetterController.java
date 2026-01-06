@@ -22,10 +22,7 @@ import org.parent.grpcserviceseeyaa.security.SecurityService;
 import org.parent.util.AlertWindow;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import module java.base;
 
 import static org.parent.util.AlertWindow.showAlert;
 
@@ -72,7 +69,7 @@ public class SendLetterController {
 
     @FXML
     public void sendLetter(ActionEvent event) {
-        final var scene = ((Node) event.getSource()).getScene();
+        var scene = ((Node) event.getSource()).getScene();
         Platform.runLater(() -> {
             text.setDisable(true);
             attachFile.setDisable(true);
@@ -85,7 +82,7 @@ public class SendLetterController {
         Task<Void> uploadTask = new Task<>() {
             @Override
             protected Void call() throws IOException {
-                final var savedLetter = letterService.sendLetter(LetterRequest.newBuilder()
+                var savedLetter = letterService.sendLetter(LetterRequest.newBuilder()
                         .setText(text.getText())
                         .setTopic(topic.getText())
                         .setUserToEmail(toWhom.getText())
@@ -93,7 +90,7 @@ public class SendLetterController {
                         .build());
 
                 for (File file : selectedFiles) {
-                    final MultipartFile multipartFile = new PathMultipartFile(file);
+                    MultipartFile multipartFile = new PathMultipartFile(file);
                     storageService.uploadFile(UploadFileRequest.newBuilder()
                             .setLetterId(savedLetter.getId())
                             .setData(ByteString.copyFrom(multipartFile.getBytes()))
@@ -129,9 +126,9 @@ public class SendLetterController {
 
 
     private void attachFile() {
-        final FileChooser fileChooser = new FileChooser();
+        var fileChooser = new FileChooser();
         fileChooser.setTitle("Select Files");
-        final List<File> files = fileChooser.showOpenMultipleDialog(stage);
+        var files = fileChooser.showOpenMultipleDialog(stage);
 
         if (files != null) {
             var scene = attachFile.getScene();

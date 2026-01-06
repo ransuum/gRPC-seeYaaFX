@@ -18,14 +18,6 @@ public class FieldUtil {
         return StringUtils.isNotBlank(parameter);
     }
 
-    public static <E extends Enum<E>> boolean isValid(E value) {
-        return value != null;
-    }
-
-    public static boolean isValid(Integer val) {
-        return val != null && val > 0;
-    }
-
     public static String refractorDate(Timestamp timestamp) {
         final var date = TimeProtoUtil.fromProto(timestamp);
         if (date.getDayOfYear() == LocalDateTime.now().getDayOfYear()
@@ -36,8 +28,8 @@ public class FieldUtil {
     }
 
     public static String refractorField(int width, String... val) {
-        final var format = String.format("%%-%ds", width);
-        final var result = Arrays.stream(val)
+        String format = String.format("%%-%ds", width);
+        var result = Arrays.stream(val)
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(" "));
         return String.format(format, result);

@@ -2,8 +2,6 @@ package org.parent.controller;
 
 import com.seeYaa.proto.email.service.users.SignUpRequest;
 import com.seeYaa.proto.email.service.users.UsersServiceGrpc;
-import io.grpc.StatusRuntimeException;
-import jakarta.validation.ConstraintViolationException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -11,7 +9,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.parent.grpcserviceseeyaa.configuration.validator.GrpcValidatorService;
-import org.parent.grpcserviceseeyaa.dto.SignUpRequestDto;
 import org.parent.grpcserviceseeyaa.mapper.UserMapper;
 import org.parent.util.AlertWindow;
 import org.springframework.stereotype.Component;
@@ -41,13 +38,13 @@ public class SignUpController {
     @FXML
     public void signUp(ActionEvent event) {
         registry();
-        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        var stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
 
     private void registry() {
         try {
-            final var signUpReq = SignUpRequest.newBuilder()
+            var signUpReq = SignUpRequest.newBuilder()
                     .setEmail(email.getText())
                     .setUsername(username.getText())
                     .setPassword(password.getText())

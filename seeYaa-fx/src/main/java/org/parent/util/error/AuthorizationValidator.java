@@ -18,7 +18,7 @@ public final class AuthorizationValidator extends DefaultErrorLabelHandler imple
 
     @Override
     public void checkFieldsLogin(ConstraintViolationException e) {
-        final String errorMessage = e.getLocalizedMessage();
+        var errorMessage = e.getLocalizedMessage();
         final boolean[] errors = new boolean[]{
                 errorMessage.contains(PatternError.EMAIL_PATTERN.getValue()),
                 errorMessage.contains(PatternError.PASSWORD_PATTERN.getValue())

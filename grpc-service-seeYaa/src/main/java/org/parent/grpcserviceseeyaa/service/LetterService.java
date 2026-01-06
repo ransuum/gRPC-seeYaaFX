@@ -8,7 +8,6 @@ import com.seeYaa.proto.email.service.letter.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.parent.grpcserviceseeyaa.configuration.letter.MovedLetterConfigurationImpl;
 import org.parent.grpcserviceseeyaa.mapper.LetterMapper;
@@ -30,15 +29,12 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     private final UserRepository userRepository;
     private final SecurityService securityService;
 
-    @SneakyThrows
     @Override
     @Authorize("hasRole('ROLE_USER')")
     public void sendLetter(LetterRequest request, StreamObserver<Letter> responseObserver) {
-        final var usersBy = userRepository.findByEmail(request.getUserByEmail())
-                .orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("You are not logged in")
-                        .asRuntimeException());
-        final var letter = userRepository.findByEmail(request.getUserToEmail())
+        var usersBy = userRepository.findByEmail(request.getUserByEmail())
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription("You are not logged in").asRuntimeException());
+        var letter = userRepository.findByEmail(request.getUserToEmail())
                 .map(userTo -> letterRepository.save(
                         org.parent.grpcserviceseeyaa.entity.Letter.builder()
                                 .userBy(usersBy)
@@ -50,11 +46,9 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
                                 .deleteTime(LocalDateTime.now())
                                 .watched(Boolean.FALSE)
                                 .build())
-                ).orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("User (to) not found")
-                        .asRuntimeException());
+                ).orElseThrow(() -> Status.NOT_FOUND.withDescription("User (to) not found").asRuntimeException());
 
-        final var letterProto = LetterMapper.INSTANCE.toLetterProto(letter);
+        var letterProto = LetterMapper.INSTANCE.toLetterProto(letter);
         responseObserver.onNext(letterProto);
         responseObserver.onCompleted();
     }
@@ -107,8 +101,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     @Transactional(readOnly = true)
     @Authorize("hasRole('ROLE_USER')")
     public void findAllSentByTopic(TopicSearchRequestBy request, StreamObserver<LetterList> responseObserver) {
-        final var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserBy(
-                        request.getTopic(),
+        var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserBy(request.getTopic(),
                         userRepository.findByEmail(request.getUserByEmail()).orElse(null))
                 .stream()
                 .map(LetterMapper.INSTANCE::toLetterProto)
@@ -124,8 +117,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     @Transactional(readOnly = true)
     @Authorize("hasRole('ROLE_USER')")
     public void findAllInboxByTopic(TopicSearchRequestTo request, StreamObserver<LetterList> responseObserver) {
-        final var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserTo(
-                        request.getTopic(),
+        var allByTopicContainingAndUserBy = letterRepository.findAllByTopicContainingAndUserTo(request.getTopic(),
                         userRepository.findByEmail(request.getUserToEmail()).orElse(null))
                 .stream()
                 .map(LetterMapper.INSTANCE::toLetterProto)
@@ -151,7 +143,7 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     @Transactional(readOnly = true)
     @Authorize("hasRole('ROLE_USER')")
     public void countOfInboxesLetter(LetterByEmail request, StreamObserver<LetterCount> responseObserver) {
-        final long count = letterRepository.countUnwatchedInboxLetters(securityService.getCurrentUserEmail());
+        var count = letterRepository.countUnwatchedInboxLetters(securityService.getCurrentUserEmail());
         responseObserver.onNext(LetterCount.newBuilder().setCount(count).build());
         responseObserver.onCompleted();
     }

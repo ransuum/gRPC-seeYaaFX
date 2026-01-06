@@ -1,6 +1,5 @@
 package org.parent.util.choicesofletters;
 
-
 import com.seeYaa.proto.email.Letter;
 import com.seeYaa.proto.email.TypeOfLetter;
 

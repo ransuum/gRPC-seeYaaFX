@@ -26,10 +26,8 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     @Override
     @Authorize("hasRole('ROLE_USER')")
     public void uploadFile(UploadFileRequest request, StreamObserver<Empty> responseObserver) {
-        final var letter = letterRepository.findById(request.getLetterId())
-                .orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("Letter not found")
-                        .asRuntimeException());
+        var letter = letterRepository.findById(request.getLetterId())
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription("Letter not found").asRuntimeException());
 
         filesRepository.save(org.parent.grpcserviceseeyaa.entity.Files.builder()
                 .name(request.getName())
@@ -47,12 +45,10 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     @Authorize("hasRole('ROLE_USER')")
     @Transactional
     public void downloadFile(FileIdRequest request, StreamObserver<DownloadFileResponse> responseObserver) {
-        org.parent.grpcserviceseeyaa.entity.Files file = filesRepository.findById(request.getFileId())
-                .orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("File not found id=" + request.getFileId())
-                        .asRuntimeException());
+        var file = filesRepository.findById(request.getFileId())
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription("File not found id=" + request.getFileId()).asRuntimeException());
 
-        DownloadFileResponse out = DownloadFileResponse.newBuilder()
+        var out = DownloadFileResponse.newBuilder()
                 .setData(ByteString.copyFrom(file.getData()))
                 .build();
 
@@ -64,7 +60,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     @Authorize("hasRole('ROLE_USER')")
     @Transactional
     public void getFilesByLetterId(LetterIdRequest request, StreamObserver<FilesList> responseObserver) {
-        final var allByLetterId = filesRepository.findAllByLetterId(request.getLetterId())
+        var allByLetterId = filesRepository.findAllByLetterId(request.getLetterId())
                 .stream()
                 .map(FilesMapper.INSTANCE::toFilesProto)
                 .toList();
@@ -77,7 +73,7 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     @Authorize("hasRole('ROLE_USER')")
     @Transactional
     public void getFileMetadataByLetterId(LetterIdRequest request, StreamObserver<FileMetadataList> responseObserver) {
-        final var rows = filesRepository.findAllByLetterId(request.getLetterId())
+        var rows = filesRepository.findAllByLetterId(request.getLetterId())
                 .stream()
                 .map(FilesMapper.INSTANCE::toMetaProto)
                 .toList();
@@ -92,10 +88,8 @@ public class StorageService extends StorageServiceGrpc.StorageServiceImplBase {
     @Authorize("hasRole('ROLE_USER')")
     @Transactional
     public void getFileById(FileIdRequest request, StreamObserver<Files> responseObserver) {
-        final var entity = filesRepository.findById(request.getFileId())
-                .orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("File not found id=" + request.getFileId())
-                        .asRuntimeException());
+        var entity = filesRepository.findById(request.getFileId())
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription("File not found id=" + request.getFileId()).asRuntimeException());
 
         responseObserver.onNext(FilesMapper.INSTANCE.toFilesProto(entity));
         responseObserver.onCompleted();

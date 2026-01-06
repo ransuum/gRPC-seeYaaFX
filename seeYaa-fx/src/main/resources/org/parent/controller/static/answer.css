@@ -1,96 +1,88 @@
 .root {
-    -fx-background-color: linear-gradient(to bottom right, #f0f0f0, #d8d8d8);
-    -fx-background-radius: 10;
+    -fx-background-color: #f6f8fc;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
-.text-field {
-    -fx-background-color: rgba(255, 255, 255, 0.8);
-    -fx-background-radius: 15;
-    -fx-border-radius: 15;
-    -fx-padding: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
-    -fx-transition: all 0.3s ease-in-out;
-}
-
-.text-field:focused {
+.reply-card {
     -fx-background-color: white;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 15, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+}
+
+.header-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #202124;
+}
+
+.reply-input {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-border-color: #dadce0;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 5;
+    -fx-font-size: 14px;
+    -fx-text-fill: #202124;
+}
+
+.reply-input:focused {
+    -fx-border-color: #0b57d0;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(11, 87, 208, 0.2), 5, 0, 0, 0);
+}
+
+.reply-input .content {
+    -fx-background-color: white;
+    -fx-cursor: text;
+}
+.reply-input .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.send-button {
+    -fx-background-color: #0b57d0;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 20px;
+    -fx-padding: 8 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);
+    -fx-transition: all 0.2s;
+}
+
+.send-button:hover {
+    -fx-background-color: #176ae6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 1);
     -fx-scale-x: 1.02;
     -fx-scale-y: 1.02;
 }
 
-.text-area {
-    -fx-background-radius: 25;
-    -fx-border-radius: 25;
-    -fx-border-width: 0;
-    -fx-background-color: rgba(255, 255, 255, 0.9);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
-    -fx-transition: all 0.3s ease-in-out;
+.send-button:pressed {
+    -fx-background-color: #0842a0;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
 }
 
-.text-area:focused {
-    -fx-background-color: white;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 15, 0, 0, 3);
+.send-button ImageView {
+    -fx-effect: dropshadow(gaussian, white, 0, 0, 0, 0);
 }
 
-.text-area .content {
-    -fx-background-radius: 25;
-    -fx-border-radius: 25;
-}
-
-.button {
-    -fx-background-color: linear-gradient(to bottom right, #464646, #2d2d2d);
-    -fx-background-radius: 40;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
-    -fx-padding: 10 20;
+.cancel-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #5f6368;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8 16;
     -fx-cursor: hand;
-    -fx-transition: all 0.3s ease-out;
+    -fx-transition: all 0.2s;
 }
 
-.button:hover {
-    -fx-background-color: linear-gradient(to bottom right, #baa7d9, #9f8ac7);
-    -fx-text-fill: black;
-    -fx-scale-x: 1.1;
-    -fx-scale-y: 1.1;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0, 0, 4);
-    -fx-rotate: 2;
+.cancel-button:hover {
+    -fx-background-color: #f1f3f4;
+    -fx-text-fill: #202124;
 }
 
-.button:pressed {
-    -fx-background-color: linear-gradient(to bottom right, #000000, #1a1a1a);
-    -fx-text-fill: #baa7d9;
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
-    -fx-rotate: 0;
-}
-
-#circleButton {
-    -fx-background-radius: 50%;
-    -fx-min-width: 44px;
-    -fx-min-height: 44px;
-    -fx-max-width: 44px;
-    -fx-max-height: 44px;
-    -fx-padding: 0;
-}
-
-#circleButton:hover {
-    -fx-rotate: 15;
-}
-
-.label {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
-    -fx-text-fill: linear-gradient(to bottom right, #2d2d2d, #464646);
-}
-
-.button.selected {
-    -fx-background-color: linear-gradient(to bottom right, #66b2ff, #3399ff);
-    -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, rgba(102,178,255,0.5), 15, 0, 0, 4);
-}
-
-@keyframes pulse {
-    0% { -fx-scale-x: 1; -fx-scale-y: 1; }
-    50% { -fx-scale-x: 1.05; -fx-scale-y: 1.05; }
-    100% { -fx-scale-x: 1; -fx-scale-y: 1; }
+.cancel-button:pressed {
+    -fx-background-color: #e8eaed;
 }

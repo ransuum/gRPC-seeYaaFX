@@ -12,10 +12,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -27,10 +30,9 @@ import org.parent.ui.AnswerRowFactory;
 import org.parent.ui.FileRowFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import module java.base;
 
 import static org.parent.util.AlertWindow.showAlert;
 
@@ -51,7 +53,7 @@ public class CheckMyLetterController {
     @FXML
     private TextArea textOfLetter;
     @FXML
-    private TextField topic;
+    private Label topic;
     @Setter
     private String currentEmail;
 
@@ -165,37 +167,46 @@ public class CheckMyLetterController {
             }
         };
 
-        task.setOnSucceeded(evt -> Platform.runLater(() -> showFiles(task.getValue())));
-        task.setOnFailed(evt -> showAlert(Alert.AlertType.ERROR, "Loading data",
+        task.setOnSucceeded(_ -> Platform.runLater(() -> showFiles(task.getValue())));
+        task.setOnFailed(_ -> showAlert(Alert.AlertType.ERROR, "Loading data",
                 "Failed to load files metadata: " + task.getException().getMessage()));
         new Thread(task).start();
     }
 
     private void showFiles(List<FileMetadata> files) {
         filesContainer.getChildren().clear();
-        final var filesBox = new VBox(10);
-        filesBox.setPadding(new Insets(10));
-        filesBox.getStyleClass().add("files-container");
 
-        for (FileMetadata meta : files) {
-            final var fileRow = FileRowFactory.createFileRow(
-                    meta,
-                    this::fileDownload,
-                    () -> (Stage) filesContainer.getScene().getWindow()
-            );
-            filesBox.getChildren().add(fileRow);
+        if (CollectionUtils.isEmpty(files)) {
+            Label noFiles = new Label("No attachments");
+            noFiles.setStyle("-fx-text-fill: #9aa0a6; -fx-font-style: italic;");
+            filesContainer.getChildren().add(noFiles);
+            return;
         }
 
-        Node filesView;
-        if (files.size() > 2) {
-            final var scrollPane = new ScrollPane(filesBox);
-            scrollPane.setFitToWidth(true);
-            scrollPane.setPrefViewportHeight(300);
-            scrollPane.getStyleClass().add("scroll-pane");
-            filesView = scrollPane;
-        } else filesView = filesBox;
+        for (FileMetadata meta : files) {
+            final HBox fileCard = new HBox(10);
+            fileCard.setAlignment(Pos.CENTER_LEFT);
+            fileCard.getStyleClass().add("file-card");
 
-        filesContainer.getChildren().setAll(filesView);
+            final ImageView icon = new ImageView(new Image(Objects.requireNonNull(
+                    getClass().getResourceAsStream("images/attachment.png"))));
+            icon.setFitWidth(24);
+            icon.setFitHeight(24);
+
+            final VBox info = new VBox(2);
+            Label nameLabel = new Label(meta.getName());
+            nameLabel.getStyleClass().add("file-name");
+
+            final Label sizeLabel = new Label(meta.getSize() + " bytes");
+            sizeLabel.getStyleClass().add("file-size");
+
+            info.getChildren().addAll(nameLabel, sizeLabel);
+
+            fileCard.setOnMouseClicked(_ -> fileDownload(meta));
+
+            fileCard.getChildren().addAll(icon, info);
+            filesContainer.getChildren().add(fileCard);
+        }
     }
 
     private void fileDownload(FileMetadata meta) {
@@ -205,7 +216,7 @@ public class CheckMyLetterController {
             Task<Void> downloadTask = fileDownloadService.createDownloadTask(
                     completeFile, stage,
                     () -> {},
-                    ex -> {}
+                    _ -> {}
             );
             new Thread(downloadTask).start();
         });

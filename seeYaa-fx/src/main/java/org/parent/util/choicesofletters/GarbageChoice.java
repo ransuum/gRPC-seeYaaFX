@@ -22,9 +22,7 @@ public class GarbageChoice implements Choice {
     @Authorize("hasRole('ROLE_USER')")
     @Transactional(readOnly = true)
     public List<Letter> addToBox(int index, String email) {
-        return movedLetterService.getGarbageLetters(
-                EmailRequest.newBuilder().setEmail(email).build())
-                .getLettersList();
+        return movedLetterService.getGarbageLetters(EmailRequest.newBuilder().setEmail(email).build()).getLettersList();
     }
 
     @Override

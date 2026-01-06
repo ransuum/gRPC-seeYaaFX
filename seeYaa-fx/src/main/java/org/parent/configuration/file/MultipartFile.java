@@ -1,14 +1,13 @@
 package org.parent.configuration.file;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.InputStreamSource;
-import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 
 public interface MultipartFile extends InputStreamSource {
 
-    @Nullable
-    String getOriginalFilename();
+    @NonNull String getOriginalFilename();
 
     long getSize();
 
