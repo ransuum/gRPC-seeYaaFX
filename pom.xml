@@ -45,4 +45,23 @@
         <ikonli-fontawesome5-pack.version>12.3.1</ikonli-fontawesome5-pack.version>
         <os.detected.classifier>windows-x86_64</os.detected.classifier>
     </properties>
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>native</id>-->
+<!--            <build>-->
+<!--                <plugins>-->
+<!--                    <plugin>-->
+<!--                        <groupId>org.graalvm.buildtools</groupId>-->
+<!--                        <artifactId>native-maven-plugin</artifactId>-->
+<!--                        <configuration>-->
+<!--                            <buildArgs>-->
+<!--                                <buildArg>&#45;&#45;verbose</buildArg>-->
+<!--                                <buildArg>-H:+ReportExceptionStackTraces</buildArg>-->
+<!--                            </buildArgs>-->
+<!--                        </configuration>-->
+<!--                    </plugin>-->
+<!--                </plugins>-->
+<!--            </build>-->
+<!--        </profile>-->
+<!--    </profiles>-->
 </project>
