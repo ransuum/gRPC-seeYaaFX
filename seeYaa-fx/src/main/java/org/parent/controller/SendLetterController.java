@@ -6,6 +6,7 @@ import com.seeYaa.proto.email.service.letter.LetterRequest;
 import com.seeYaa.proto.email.service.letter.LetterServiceGrpc;
 import com.seeYaa.proto.email.service.storage.StorageServiceGrpc;
 import com.seeYaa.proto.email.service.storage.UploadFileRequest;
+import io.grpc.StatusRuntimeException;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -20,6 +21,7 @@ import org.parent.configuration.file.PathMultipartFile;
 import org.parent.configuration.file.size.FileSize;
 import org.parent.grpcserviceseeyaa.security.SecurityService;
 import org.parent.util.AlertWindow;
+import org.parent.util.ExceptionUtil;
 import org.springframework.stereotype.Component;
 
 import module java.base;
@@ -28,20 +30,13 @@ import static org.parent.util.AlertWindow.showAlert;
 
 @Component
 public class SendLetterController {
-    @FXML
-    private Button attachFile;
-    @FXML
-    private TextField hiding;
-    @FXML
-    private Button sendLetter;
-    @FXML
-    private TextArea text;
-    @FXML
-    private TextField toWhom;
-    @FXML
-    private TextField topic;
-    @FXML
-    private Label attachmentLabel;
+    @FXML private Button attachFile;
+    @FXML private TextField hiding;
+    @FXML private Button sendLetter;
+    @FXML private TextArea text;
+    @FXML private TextField toWhom;
+    @FXML private TextField topic;
+    @FXML private Label attachmentLabel;
 
     private final LetterServiceGrpc.LetterServiceBlockingStub letterService;
     private final StorageServiceGrpc.StorageServiceBlockingStub storageService;
@@ -111,15 +106,17 @@ public class SendLetterController {
                 }));
 
         uploadTask.setOnFailed(e ->
-            Platform.runLater(() -> {
-                scene.setCursor(Cursor.DEFAULT);
-                text.setDisable(false);
-                attachFile.setDisable(false);
-                sendLetter.setDisable(false);
-                toWhom.setDisable(false);
-                topic.setDisable(false);
-                AlertWindow.showAlert(Alert.AlertType.ERROR, "Send Letter Failed", uploadTask.getException().getLocalizedMessage());
-            }));
+                Platform.runLater(() -> {
+                    scene.setCursor(Cursor.DEFAULT);
+                    text.setDisable(false);
+                    attachFile.setDisable(false);
+                    sendLetter.setDisable(false);
+                    toWhom.setDisable(false);
+                    topic.setDisable(false);
+
+                    final Throwable throwable = uploadTask.getException();
+                    AlertWindow.showAlert(Alert.AlertType.WARNING, "Send Letter Failed", ExceptionUtil.getMessageFromError(throwable));
+                }));
 
         new Thread(uploadTask).start();
     }

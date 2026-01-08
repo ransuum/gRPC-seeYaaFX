@@ -23,30 +23,16 @@ import module java.base;
 
 @Component
 public class EditController {
-    @FXML
-    @Getter
-    private TextField email;
-    @FXML
-    @Getter
-    private TextField firstname;
-    @FXML
-    private CheckBox firstnameCheck;
-    @FXML
-    @Getter
-    private TextField lastname;
-    @FXML
-    private CheckBox lastnameCheck;
-    @FXML
-    private TextField password1;
-    @FXML
-    private CheckBox password1Check;
-    @FXML
-    private TextField password2;
-    @FXML
-    @Getter
-    private TextField username;
-    @FXML
-    private CheckBox usernameCheck;
+    @FXML @Getter private TextField email;
+    @FXML @Getter private TextField firstname;
+    @FXML private CheckBox firstnameCheck;
+    @FXML @Getter private TextField lastname;
+    @FXML private CheckBox lastnameCheck;
+    @FXML private TextField password1;
+    @FXML private CheckBox password1Check;
+    @FXML private TextField password2;
+    @FXML @Getter private TextField username;
+    @FXML private CheckBox usernameCheck;
 
     private final UsersServiceGrpc.UsersServiceBlockingStub blockingStub;
 

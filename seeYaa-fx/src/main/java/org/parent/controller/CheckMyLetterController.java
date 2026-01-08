@@ -39,24 +39,16 @@ import static org.parent.util.AlertWindow.showAlert;
 @Component
 @Slf4j
 public class CheckMyLetterController {
-    @FXML
-    private Label email;
+    @FXML private Label email;
+    @FXML private Label firstNameLast;
+    @FXML private VBox answers;
+    @FXML private VBox filesContainer;
+    @FXML private TextArea textOfLetter;
+    @FXML private Label topic;
+    @Setter private String currentEmail;
+
 
     private Letter letterDto;
-
-    @FXML
-    private Label firstNameLast;
-    @FXML
-    private VBox answers;
-    @FXML
-    private VBox filesContainer;
-    @FXML
-    private TextArea textOfLetter;
-    @FXML
-    private Label topic;
-    @Setter
-    private String currentEmail;
-
     private Stage stage;
 
     private final ConfigurableApplicationContext springContext;

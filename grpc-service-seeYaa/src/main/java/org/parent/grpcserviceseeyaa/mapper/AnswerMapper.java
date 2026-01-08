@@ -2,7 +2,6 @@ package org.parent.grpcserviceseeyaa.mapper;
 
 import com.seeYaa.proto.email.Answer;
 import com.seeYaa.proto.email.Letter;
-import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 

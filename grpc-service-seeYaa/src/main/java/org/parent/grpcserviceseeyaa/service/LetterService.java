@@ -84,14 +84,12 @@ public class LetterService extends LetterServiceGrpc.LetterServiceImplBase {
     @Authorize("hasRole('ROLE_USER')")
     public void findById(LetterIdRequest request, StreamObserver<Letter> responseObserver) {
         var letter = letterRepository.findById(request.getId())
-                .orElseThrow(() -> Status.NOT_FOUND
-                        .withDescription("Letter not found")
-                        .asRuntimeException());
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription("Letter not found").asRuntimeException());
         if (!letter.getUserBy().getEmail().equals(securityService.getCurrentUserEmail())
                 && letter.getWatched().equals(Boolean.FALSE)) {
             securityService.getCurrentUserEmail();
             letter.setWatched(Boolean.TRUE);
-            letter = letterRepository.save(letter);
+            letterRepository.save(letter);
         }
         responseObserver.onNext(LetterMapper.INSTANCE.toLetterProto(letter));
         responseObserver.onCompleted();

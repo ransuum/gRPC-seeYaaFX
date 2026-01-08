@@ -108,7 +108,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.parent.grpcserviceseeyaa.GrpcServiceSeeYaaApplication</mainClass>
+                    <classifier>exec</classifier>
+                    <mainClass>org.parent.SpringSeeYaaGrpc</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

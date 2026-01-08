@@ -30,6 +30,8 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
     private final AuthenticationStore authenticationStore;
     private final RsaCredentials rsaCredentials;
 
+    private static final String USER_NOT_LOGGED_IN = "User is not logged in";
+
     @Override
     public void signUp(SignUpRequest request, StreamObserver<Empty> responseObserver) {
         var savedUser = org.parent.grpcserviceseeyaa.entity.Users.newBuilder()
@@ -52,7 +54,7 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
     @Transactional(readOnly = true)
     public void getCurrentUser(Empty request, StreamObserver<Users> responseObserver) {
         var user = userRepository.findByEmail(securityService.getCurrentUserEmail())
-                .orElseThrow(() -> Status.NOT_FOUND.withDescription("You are not logged in").asRuntimeException());
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription(USER_NOT_LOGGED_IN).asRuntimeException());
 
         responseObserver.onNext(UserMapper.INSTANCE.toUserProto(user));
         responseObserver.onCompleted();
@@ -63,7 +65,7 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
     @Transactional(readOnly = true)
     public void getCurrentUserExtended(Empty request, StreamObserver<UserWithLetters> responseObserver) {
         var user = userRepository.findByEmail(securityService.getCurrentUserEmail())
-                .orElseThrow(() -> Status.NOT_FOUND.withDescription("You are not logged in").asRuntimeException());
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription(USER_NOT_LOGGED_IN).asRuntimeException());
 
         responseObserver.onNext(UserMapper.INSTANCE.toUserWithLettersProto(user));
         responseObserver.onCompleted();
@@ -73,7 +75,7 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
     @Authorize("hasRole('ROLE_USER')")
     public void editProfile(EditProfileRequest request, StreamObserver<Empty> responseObserver) {
        var users = userRepository.findByEmail(securityService.getCurrentUserEmail())
-                .orElseThrow(() -> Status.NOT_FOUND.withDescription("You are not logged in").asRuntimeException());
+                .orElseThrow(() -> Status.NOT_FOUND.withDescription(USER_NOT_LOGGED_IN).asRuntimeException());
 
         if (!request.getFirstname().equals(users.getFirstname())) users.setFirstname(request.getFirstname());
         if (!request.getPassword().equals("N") && BCrypt.verifyer().verify(request.getPassword().toCharArray(), users.getPassword()).verified)

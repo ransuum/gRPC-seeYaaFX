@@ -1,7 +1,6 @@
 package org.parent.util.error;
 
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
 import javafx.scene.control.Label;
 import org.parent.configuration.error.PatternError;
 
