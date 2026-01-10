@@ -27,7 +27,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.parent.service.FileDownloadService;
 import org.parent.ui.AnswerRowFactory;
-import org.parent.ui.FileRowFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -46,7 +45,6 @@ public class CheckMyLetterController {
     @FXML private TextArea textOfLetter;
     @FXML private Label topic;
     @Setter private String currentEmail;
-
 
     private Letter letterDto;
     private Stage stage;
@@ -125,7 +123,7 @@ public class CheckMyLetterController {
     private void setLetterContent(String topic, String text, String byEmail, String fullName) {
         this.topic.setText(topic);
         this.textOfLetter.setText(text);
-        this.email.setText("Email:  " + byEmail);
+        this.email.setText("Email: " + byEmail);
         this.firstNameLast.setText(fullName);
     }
 
@@ -137,16 +135,16 @@ public class CheckMyLetterController {
         final List<Answer> sorted = letterDto.getAnswersList();
 
         for (var answer : sorted) {
-            final var answerRow = AnswerRowFactory.createAnswerRow(answer, textOfLetter::setText);
+            var answerRow = AnswerRowFactory.createAnswerRow(answer, textOfLetter::setText);
             answers.getChildren().add(answerRow);
         }
     }
 
     private void loadFileMetadataAsync() {
         filesContainer.getChildren().clear();
-        final var loadingLabel = new Label("Loading file information...");
-        final var progress = new ProgressIndicator();
-        final var loader = new HBox(10, progress, loadingLabel);
+        var loadingLabel = new Label("Loading file information...");
+        var progress = new ProgressIndicator();
+        var loader = new HBox(10, progress, loadingLabel);
         filesContainer.getChildren().add(loader);
 
         Task<List<FileMetadata>> task = new Task<>() {
@@ -218,7 +216,7 @@ public class CheckMyLetterController {
     }
 
     private void answerOnLetter() throws IOException {
-        final var fxmlLoader = new FXMLLoader(getClass().getResource("answer.fxml"));
+        var fxmlLoader = new FXMLLoader(getClass().getResource("answer.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
         Parent root = fxmlLoader.load();
 

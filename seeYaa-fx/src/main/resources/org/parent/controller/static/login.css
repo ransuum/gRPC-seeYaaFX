@@ -1,26 +1,20 @@
-/* 1. Main Background */
 .root {
-    /* A nice modern purple-blue gradient */
     -fx-background-color: linear-gradient(to bottom right, #e0eafc, #cfdef3);
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
-/* 2. The White Card Container */
 .login-card {
     -fx-background-color: white;
     -fx-background-radius: 20;
-    /* Soft drop shadow to make it pop */
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 20, 0, 0, 5);
 }
 
-/* 3. Header Text */
 .header-label {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
 }
 
-/* 4. Input Fields */
 .input-field {
     -fx-background-color: #f1f3f5;
     -fx-background-radius: 8;
@@ -34,25 +28,21 @@
 
 .input-field:focused {
     -fx-background-color: white;
-    /* A subtle ring border on focus */
     -fx-border-color: #a6c0fe;
     -fx-border-width: 1.5;
     -fx-border-radius: 8;
     -fx-effect: dropshadow(gaussian, rgba(166, 192, 254, 0.4), 8, 0, 0, 2);
 }
 
-/* 5. Error Labels */
 .error-label {
     -fx-text-fill: #ff6b6b;
     -fx-font-size: 11px;
     -fx-padding: 2 0 5 5;
 }
 
-/* 6. The Circle Action Button */
 .action-button {
-    /* Gradient Button */
     -fx-background-color: linear-gradient(to right, #6a11cb, #2575fc);
-    -fx-background-radius: 100; /* Makes it a circle */
+    -fx-background-radius: 100;
     -fx-effect: dropshadow(gaussian, rgba(37, 117, 252, 0.3), 10, 0, 0, 4);
     -fx-transition: all 0.25s ease;
 }
@@ -70,13 +60,10 @@
     -fx-scale-y: 0.95;
 }
 
-/* Make the icon inside the button white (if it's a transparent png) */
-/* If your image is black, you might need a white version, or use -fx-effect: null */
 .action-button ImageView {
     -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 2, 0, 0, 0);
 }
 
-/* 7. Sign Up Link */
 .link-text {
     -fx-fill: #2575fc;
     -fx-font-weight: bold;
@@ -91,13 +78,8 @@
     -fx-underline: true;
 }
 
-/* Optional: Entry Animation */
 .login-card {
     -fx-translate-y: 0;
     -fx-opacity: 1;
     -fx-animation: slideIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-
-/* Note: CSS Keyframes are limited in JavaFX 8/11/17 CSS. 
-   If animations don't work via pure CSS, usually you do them in Java Controller.
-   But simple transitions on hover work great. */

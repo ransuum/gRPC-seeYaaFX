@@ -10,117 +10,118 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
-<?import javafx.scene.text.Font?>
 
-<?import javafx.scene.layout.Region?>
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
-      prefWidth="900.0" styleClass="edit-card" stylesheets="@static/edit.css" xmlns="http://javafx.com/javafx/22"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.parent.controller.EditController"><!-- LEFT PANEL: Profile Picture -->
-   <VBox alignment="CENTER" prefWidth="300.0" styleClass="left-panel">
-      <padding>
-         <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
-      </padding>
-      <Label styleClass="section-header-white" text="Profile Picture"/>
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="650.0" prefWidth="950.0"
+      styleClass="edit-card" stylesheets="@static/edit.css"
+      xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.parent.controller.EditController">
 
-      <StackPane>
-         <VBox.margin>
-            <Insets bottom="20.0" top="20.0"/>
-         </VBox.margin>
-         <ImageView fitHeight="180.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
-            <clip>
-               <Circle centerX="90" centerY="90" radius="90"/>
-            </clip>
-            <Image url="@images/profile.png"/>
-         </ImageView>
+    <VBox alignment="CENTER" prefWidth="320.0" spacing="10.0" styleClass="left-panel">
+        <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0"/>
+        </padding>
 
-         <!-- Change Photo Button Overlay -->
-         <Button contentDisplay="GRAPHIC_ONLY" styleClass="camera-btn" StackPane.alignment="BOTTOM_RIGHT">
-            <graphic>
-               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                  <Image url="@images/edit-text.png"/> <!-- Using edit icon as placeholder for camera -->
-               </ImageView>
-            </graphic>
-            <StackPane.margin>
-               <Insets bottom="10.0" right="20.0"/>
-            </StackPane.margin>
-            <cursor>
-               <Cursor fx:constant="HAND"/>
-            </cursor>
-         </Button>
-      </StackPane>
+        <StackPane>
+            <VBox.margin>
+                <Insets bottom="15.0"/>
+            </VBox.margin>
 
-      <TextField fx:id="email" alignment="CENTER" disable="true" editable="false" promptText="email@example.com"
-                 styleClass="email-display-field"/>
-   </VBox>
+            <ImageView fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                <clip>
+                    <Circle centerX="80" centerY="80" radius="80"/>
+                </clip>
+                <Image url="@images/profile.png"/>
+            </ImageView>
 
-   <!-- RIGHT PANEL: Editable Forms -->
-   <VBox HBox.hgrow="ALWAYS" spacing="20.0" styleClass="right-panel">
-      <padding>
-         <Insets bottom="40.0" left="50.0" right="50.0" top="40.0"/>
-      </padding>
-      <Label styleClass="page-title" text="Edit Profile"/>
-      <Separator prefWidth="200.0"/>
+            <Button contentDisplay="GRAPHIC_ONLY" styleClass="camera-btn" StackPane.alignment="BOTTOM_RIGHT">
+                <graphic>
+                    <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@images/edit-text.png"/>
+                    </ImageView>
+                </graphic>
+                <StackPane.margin>
+                    <Insets bottom="5.0" right="25.0"/>
+                </StackPane.margin>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Button>
+        </StackPane>
 
-      <!-- Section 1: Personal Info -->
-      <VBox spacing="15.0">
-         <Label styleClass="section-label" text="Personal Information"/>
+        <Label styleClass="section-header-white" text="Your Profile"/>
 
-         <HBox spacing="20.0">
-            <!-- First Name Block -->
-            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-               <HBox alignment="CENTER_LEFT" spacing="10.0">
-                  <CheckBox fx:id="firstnameCheck" text="First Name"/>
-               </HBox>
-               <TextField fx:id="firstname" disable="true" promptText="John" styleClass="input-field"/>
-            </VBox>
+        <TextField fx:id="email" alignment="CENTER" disable="true" editable="false"
+                   text="dima@example.com" styleClass="email-display-field"/>
+    </VBox>
 
-            <!-- Last Name Block -->
-            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-               <HBox alignment="CENTER_LEFT" spacing="10.0">
-                  <CheckBox fx:id="lastnameCheck" text="Last Name"/>
-               </HBox>
-               <TextField fx:id="lastname" disable="true" promptText="Doe" styleClass="input-field"/>
-            </VBox>
-         </HBox>
-      </VBox>
+    <VBox HBox.hgrow="ALWAYS" spacing="25.0" styleClass="right-panel">
+        <padding>
+            <Insets bottom="40.0" left="60.0" right="60.0" top="40.0"/>
+        </padding>
 
-      <!-- Section 2: Account Details -->
-      <VBox spacing="15.0">
-         <Label styleClass="section-label" text="Account Security"/>
+        <VBox spacing="5.0">
+            <Label styleClass="page-title" text="Edit Profile"/>
+            <Label text="Manage your personal information and security settings." textFill="#9ca3af"
+                   style="-fx-font-size: 14px;"/>
+        </VBox>
 
-         <!-- Username -->
-         <VBox spacing="5.0">
-            <CheckBox fx:id="usernameCheck" text="Username"/>
-            <TextField fx:id="username" disable="true" promptText="johndoe" styleClass="input-field"/>
-         </VBox>
+        <Separator prefWidth="200.0"/>
 
-         <!-- Password Block -->
-         <VBox spacing="5.0">
-            <CheckBox fx:id="password1Check" text="Change Password"/>
+        <!-- Section 1: Personal Info -->
+        <VBox spacing="15.0">
+            <Label styleClass="section-label" text="PERSONAL INFORMATION"/>
+
             <HBox spacing="20.0">
-               <TextField fx:id="password1" disable="true" promptText="New Password" styleClass="input-field"
-                          HBox.hgrow="ALWAYS"/>
-               <TextField fx:id="password2" disable="true" promptText="Confirm Password" styleClass="input-field"
-                          HBox.hgrow="ALWAYS"/>
+                <!-- First Name -->
+                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                    <CheckBox fx:id="firstnameCheck" text="First Name"/>
+                    <TextField fx:id="firstname" disable="true" promptText="John" styleClass="input-field"/>
+                </VBox>
+
+                <!-- Last Name -->
+                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                    <CheckBox fx:id="lastnameCheck" text="Last Name"/>
+                    <TextField fx:id="lastname" disable="true" promptText="Doe" styleClass="input-field"/>
+                </VBox>
             </HBox>
-         </VBox>
-      </VBox>
+        </VBox>
 
-      <Region VBox.vgrow="ALWAYS"/>
+        <!-- Section 2: Account Security -->
+        <VBox spacing="15.0">
+            <Label styleClass="section-label" text="ACCOUNT SECURITY"/>
 
-      <!-- Action Buttons -->
-      <HBox alignment="CENTER_RIGHT" spacing="15.0">
-         <!-- You might want a cancel button here too -->
-         <Button mnemonicParsing="false" onAction="#confirm" prefHeight="45.0" prefWidth="150.0"
-                 styleClass="save-button" text="Save Changes">
-            <cursor>
-               <Cursor fx:constant="HAND"/>
-            </cursor>
-         </Button>
-      </HBox>
-   </VBox>
+            <!-- Username -->
+            <VBox spacing="8.0">
+                <CheckBox fx:id="usernameCheck" text="Username"/>
+                <TextField fx:id="username" disable="true" promptText="johndoe" styleClass="input-field"/>
+            </VBox>
+
+            <!-- Password -->
+            <VBox spacing="8.0">
+                <CheckBox fx:id="password1Check" text="Change Password"/>
+                <HBox spacing="20.0">
+                    <TextField fx:id="password1" disable="true" promptText="New Password"
+                               styleClass="input-field" HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="password2" disable="true" promptText="Confirm Password"
+                               styleClass="input-field" HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </VBox>
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+            <Button mnemonicParsing="false" onAction="#confirm" prefHeight="42.0" prefWidth="160.0"
+                    styleClass="save-button" text="Save Changes">
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Button>
+        </HBox>
+    </VBox>
 </HBox>

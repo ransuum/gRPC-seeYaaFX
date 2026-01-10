@@ -53,7 +53,6 @@
 
     <build>
         <plugins>
-            <!-- 1. Compiler Plugin (To run Lombok) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -75,13 +74,10 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
-            <!-- 2. Spring Boot Plugin (Replaces Shade Plugin) -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!-- Point to your wrapper main class -->
                     <mainClass>org.parent.SpringSeeYaaGrpc</mainClass>
                 </configuration>
                 <executions>

@@ -340,10 +340,10 @@ public class EmailController {
             final CheckMyLetterController controller = fxmlLoader.getController();
             controller.setLetter(letter1, function);
             controller.setCurrentEmail(emailOfAuthUser.getText());
-            stage.widthProperty().addListener((obs, oldVal, newVal) -> stage.centerOnScreen());
-            stage.heightProperty().addListener((obs, oldVal, newVal) -> stage.centerOnScreen());
+            stage.widthProperty().addListener((_, _, _) -> stage.centerOnScreen());
+            stage.heightProperty().addListener((_, _, _) -> stage.centerOnScreen());
             stage.centerOnScreen();
-            stage.setOnCloseRequest(event -> openStages.remove(letterId));
+            stage.setOnCloseRequest(_ -> openStages.remove(letterId));
             stage.initModality(Modality.APPLICATION_MODAL);
             openStages.put(letterId, stage);
             updateInboxCounter();
