@@ -8,12 +8,14 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 @SpringBootApplication(
         scanBasePackageClasses = {GrpcConfig.class},
         scanBasePackages = {"org.parent"})
 public class SpringSeeYaaGrpc {
     public static void main(String[] args) {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         Application.launch(SeeYaaApplicationFX.class, args);
     }
 

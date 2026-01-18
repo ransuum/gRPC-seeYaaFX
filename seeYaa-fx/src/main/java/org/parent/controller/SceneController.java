@@ -69,11 +69,17 @@ public class SceneController {
         incorrectInputEmail.setVisible(false);
         incorrectInputPassword.setVisible(false);
 
+        String email = emailInput.getText() != null ? emailInput.getText().trim() : "";
+        String pwd = password.getText() != null ? password.getText() : "";
+
         try {
-            grpcValidatorService.validSignIn(new SignInRequestDto(emailInput.getText(), password.getText()));
-            userService.authentication(SignInRequest.newBuilder()
-                    .setCredentialsBase64(rsaCredentials.encrypt(emailInput.getText(), password.getText()))
+            grpcValidatorService.validSignIn(new SignInRequestDto(email, pwd));
+            var response = userService.authentication(SignInRequest.newBuilder()
+                    .setCredentialsBase64(rsaCredentials.encrypt(email, pwd))
                     .build());
+            log.info("Authentication successful for user: {}", response.getEmail());
+            password.clear();
+
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("email.fxml"));
             fxmlLoader.setControllerFactory(springContext::getBean);
             root = fxmlLoader.load();
@@ -90,9 +96,15 @@ public class SceneController {
             check.checkFieldsLogin(e);
             incorrectInputPassword = check.getIncorrectInputPassword();
             incorrectInputEmail = check.getIncorrectInputEmail();
-        } catch (SecurityException e) {
-            incorrectInputPassword.setText("Wrong password or email");
+        } catch (io.grpc.StatusRuntimeException e) {
+            log.warn("Authentication failed: {}", e.getStatus().getDescription());
+            incorrectInputPassword.setText("Invalid email or password");
             incorrectInputPassword.setVisible(true);
+            password.clear();
+        } catch (Exception e) {
+            log.error("Unexpected error during authentication", e);
+            AlertWindow.showAlert(Alert.AlertType.ERROR, "Authentication Error", "An unexpected error occurred. Please try again.");
+            password.clear();
         }
     }
 

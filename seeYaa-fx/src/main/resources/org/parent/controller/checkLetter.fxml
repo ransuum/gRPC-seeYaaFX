@@ -12,84 +12,50 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="866.0" prefWidth="1100.0"
-            styleClass="view-root" stylesheets="@static/checkMyLetters.css"
-            xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.parent.controller.CheckMyLetterController">
+<StackPane fx:id="rootStack"
+           prefHeight="866.0" prefWidth="1100.0"
+           styleClass="root" stylesheets="@static/checkMyLetters.css"
+           xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.parent.controller.CheckMyLetterController">
 
-    <top>
-        <VBox styleClass="header-section" BorderPane.alignment="CENTER">
-            <HBox alignment="CENTER_LEFT" spacing="15.0">
-                <padding>
-                    <Insets bottom="10.0" top="15.0"/>
-                </padding>
-
-                <Button mnemonicParsing="false" onAction="#quit" styleClass="icon-button-back">
-                    <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@images/arrow-left.png"/>
-                        </ImageView>
-                    </graphic>
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-
-                <Region HBox.hgrow="ALWAYS"/>
-
-                <Button mnemonicParsing="false" onAction="#helpToUnderstandText"
-                        styleClass="icon-button" text="Explain">
-                    <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@images/chatbot.png"/>
-                        </ImageView>
-                    </graphic>
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-            </HBox>
-
-            <Label fx:id="topic" styleClass="subject-label" text="Project Update: Q3 Deliverables" wrapText="true"/>
-
-            <Separator prefWidth="200.0">
-                <VBox.margin>
-                    <Insets top="10.0"/>
-                </VBox.margin>
-            </Separator>
-        </VBox>
-    </top>
-
-    <center>
-        <ScrollPane fitToWidth="true" styleClass="body-scroll-pane" BorderPane.alignment="CENTER">
-            <VBox spacing="25.0" styleClass="email-body-container">
-                <padding>
-                    <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
-                </padding>
-
-                <HBox alignment="CENTER_LEFT" spacing="15.0">
-                    <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
-                        <clip>
-                            <Circle centerX="24" centerY="24" radius="24"/>
-                        </clip>
-                        <Image url="@images/user.png"/>
-                    </ImageView>
-
-                    <VBox alignment="CENTER_LEFT" spacing="2.0">
-                        <Label fx:id="firstNameLast" styleClass="sender-name" text="John Doe"/>
-                        <Label fx:id="email" styleClass="sender-email" text="john.doe@example.com"/>
-                    </VBox>
+    <BorderPane styleClass="main-view-blur-target">
+        <top>
+            <VBox styleClass="header-section" BorderPane.alignment="CENTER">
+                <HBox alignment="CENTER_LEFT" spacing="15.0" prefHeight="48.0">
+                    <Button mnemonicParsing="false" onAction="#quit" styleClass="icon-button-back">
+                        <graphic>
+                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                <Image url="@images/arrow-left.png"/>
+                            </ImageView>
+                        </graphic>
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
 
                     <Region HBox.hgrow="ALWAYS"/>
 
-                    <Button mnemonicParsing="false" onAction="#answer" styleClass="reply-button" text="Reply">
+                    <Button fx:id="historyButton" mnemonicParsing="false" onAction="#toggleHistory"
+                            styleClass="pill-button-secondary" text="History (0)">
                         <graphic>
-                            <ImageView fitHeight="14.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
-                                <Image url="@images/reply.png"/>
+                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" opacity="0.6">
+                                <Image url="@images/clock.png"/>
+                            </ImageView>
+                        </graphic>
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+
+                    <Button mnemonicParsing="false" onAction="#helpToUnderstandText"
+                            styleClass="pill-button" text="Explain with AI">
+                        <graphic>
+                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                <Image url="@images/chatbot.png"/>
                             </ImageView>
                         </graphic>
                         <cursor>
@@ -98,30 +64,76 @@
                     </Button>
                 </HBox>
 
-                <TextArea fx:id="textOfLetter" editable="false" prefRowCount="12"
-                          styleClass="email-content-area" wrapText="true"
-                          text="Hey team,&#10;&#10;Here are the updates for the quarter. We need to review the attached documents by Friday.&#10;&#10;Best,&#10;John"/>
-
-                <VBox spacing="10.0">
-                    <Label styleClass="section-header" text="ATTACHMENTS"/>
-                    <VBox fx:id="filesContainer" spacing="8.0"/>
-                </VBox>
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <Label fx:id="topic" styleClass="subject-label" text="Project Update" wrapText="true"/>
+                </HBox>
+                <Separator prefWidth="200.0" />
             </VBox>
-        </ScrollPane>
-    </center>
+        </top>
 
-    <right>
-        <VBox prefWidth="320.0" spacing="15.0" styleClass="sidebar" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-            </padding>
+        <center>
+            <ScrollPane fitToWidth="true" styleClass="body-scroll-pane" BorderPane.alignment="CENTER">
+                <VBox spacing="20.0" styleClass="thread-container">
+                    <padding>
+                        <Insets bottom="40.0" left="40.0" right="40.0" top="20.0"/>
+                    </padding>
 
-            <Label styleClass="sidebar-title" text="Discussion History"/>
+                    <VBox styleClass="email-card-expanded">
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <padding>
+                                <Insets bottom="15.0" left="20.0" right="20.0" top="20.0"/>
+                            </padding>
+                            <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                                <clip>
+                                    <Circle centerX="24" centerY="24" radius="24"/>
+                                </clip>
+                                <Image url="@images/user.png"/>
+                            </ImageView>
+                            <VBox alignment="CENTER_LEFT" spacing="2.0">
+                                <Label fx:id="firstNameLast" styleClass="sender-name" text="John Doe"/>
+                                <Label fx:id="email" styleClass="sender-email" text="&lt;john.doe@example.com&gt;"/>
+                            </VBox>
+                        </HBox>
 
-            <ScrollPane fitToWidth="true" styleClass="sidebar-scroll" VBox.vgrow="ALWAYS">
-                <VBox fx:id="answers" spacing="12.0"/>
+                        <TextArea fx:id="textOfLetter" editable="false" prefRowCount="10"
+                                  styleClass="email-content-area" wrapText="true"/>
+
+                        <VBox spacing="10.0">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="10.0"/>
+                            </padding>
+                            <Separator />
+                            <Label styleClass="section-header" text="Attachments"/>
+                            <ScrollPane fitToWidth="true" prefHeight="100.0" styleClass="files-scroll-pane">
+                                <VBox fx:id="filesContainer" spacing="8.0" />
+                            </ScrollPane>
+                        </VBox>
+                    </VBox>
+
+                    <Button mnemonicParsing="false" onAction="#answer" styleClass="reply-pill-button" text="Reply">
+                        <graphic>
+                            <ImageView fitHeight="14.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true"><Image url="@images/reply.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                </VBox>
+            </ScrollPane>
+        </center>
+    </BorderPane>
+
+    <StackPane fx:id="historyOverlay" visible="false" styleClass="modal-overlay">
+        <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" styleClass="modal-window">
+
+            <HBox alignment="CENTER_LEFT" styleClass="modal-header">
+                <Label styleClass="modal-title" text="Discussion History" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button onAction="#toggleHistory" styleClass="icon-button-close" text="✕" />
+            </HBox>
+
+            <ScrollPane fitToWidth="true" styleClass="modal-scroll" VBox.vgrow="ALWAYS">
+                <VBox fx:id="answers" spacing="0.0" />
             </ScrollPane>
         </VBox>
-    </right>
+    </StackPane>
 
-</BorderPane>
+</StackPane>
+

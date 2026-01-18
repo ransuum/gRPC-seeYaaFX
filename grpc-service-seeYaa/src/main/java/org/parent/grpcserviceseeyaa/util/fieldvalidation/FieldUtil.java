@@ -19,7 +19,7 @@ public class FieldUtil {
     }
 
     public static String refractorDate(Timestamp timestamp) {
-        final var date = TimeProtoUtil.fromProto(timestamp);
+        var date = TimeProtoUtil.fromProto(timestamp);
         if (date.getDayOfYear() == LocalDateTime.now().getDayOfYear()
                 && date.getDayOfMonth() == LocalDateTime.now().getDayOfMonth())
             return (date.getHour() < 10 ? "0" + date.getHour() : date.getHour()) + ":"
@@ -29,9 +29,7 @@ public class FieldUtil {
 
     public static String refractorField(int width, String... val) {
         String format = String.format("%%-%ds", width);
-        var result = Arrays.stream(val)
-                .filter(Objects::nonNull)
-                .collect(Collectors.joining(" "));
+        var result = Arrays.stream(val).filter(Objects::nonNull).collect(Collectors.joining(" "));
         return String.format(format, result);
     }
 }

@@ -11,8 +11,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -40,7 +39,9 @@ import static org.parent.util.AlertWindow.showAlert;
 public class CheckMyLetterController {
     @FXML private Label email;
     @FXML private Label firstNameLast;
+    @FXML private StackPane historyOverlay;
     @FXML private VBox answers;
+    @FXML private Button historyButton;
     @FXML private VBox filesContainer;
     @FXML private TextArea textOfLetter;
     @FXML private Label topic;
@@ -127,15 +128,26 @@ public class CheckMyLetterController {
         this.firstNameLast.setText(fullName);
     }
 
+    @FXML
+    public void toggleHistory() {
+        boolean isVisible = historyOverlay.isVisible();
+        historyOverlay.setVisible(!isVisible);
+    }
+
     private void loadAnswers() {
         answers.getChildren().clear();
-        answers.setSpacing(10);
-        answers.setPadding(new Insets(10));
 
         final List<Answer> sorted = letterDto.getAnswersList();
 
+        historyButton.setText("History (" + sorted.size() + ")");
+
         for (var answer : sorted) {
-            var answerRow = AnswerRowFactory.createAnswerRow(answer, textOfLetter::setText);
+            Consumer<String> action = (text) -> {
+                textOfLetter.setText(text);
+                toggleHistory();
+            };
+
+            var answerRow = AnswerRowFactory.createAnswerRow(answer, action);
             answers.getChildren().add(answerRow);
         }
     }
@@ -174,34 +186,32 @@ public class CheckMyLetterController {
         }
 
         for (FileMetadata meta : files) {
-            final HBox fileCard = new HBox(10);
-            fileCard.setAlignment(Pos.CENTER_LEFT);
-            fileCard.getStyleClass().add("file-card");
+            HBox fileRow = new HBox(10);
+            fileRow.getStyleClass().add("file-item-row");
 
             final ImageView icon = new ImageView(new Image(Objects.requireNonNull(
                     getClass().getResourceAsStream("images/attachment.png"))));
-            icon.setFitWidth(24);
-            icon.setFitHeight(24);
+            icon.setFitHeight(20); icon.setFitWidth(20);
 
-            final VBox info = new VBox(2);
-            Label nameLabel = new Label(meta.getName());
-            nameLabel.getStyleClass().add("file-name");
+            VBox info = new VBox(2);
+            Label name = new Label(meta.getName());
+            name.getStyleClass().add("file-name-text");
 
-            final Label sizeLabel = new Label(meta.getSize() + " bytes");
-            sizeLabel.getStyleClass().add("file-size");
+            Label size = new Label(String.valueOf(meta.getSize()));
+            size.getStyleClass().add("file-size-text");
 
-            info.getChildren().addAll(nameLabel, sizeLabel);
+            info.getChildren().addAll(name, size);
 
-            fileCard.setOnMouseClicked(_ -> fileDownload(meta));
+            fileRow.setOnMouseClicked(_ -> fileDownload(meta));
+            fileRow.getChildren().addAll(icon, info);
 
-            fileCard.getChildren().addAll(icon, info);
-            filesContainer.getChildren().add(fileCard);
+            filesContainer.getChildren().add(fileRow);
         }
     }
 
     private void fileDownload(FileMetadata meta) {
         Task<Files> loadTask = fileDownloadService.createFileLoadTask(meta.getId());
-        loadTask.setOnSucceeded(e -> {
+        loadTask.setOnSucceeded(_ -> {
             final Files completeFile = loadTask.getValue();
             Task<Void> downloadTask = fileDownloadService.createDownloadTask(
                     completeFile, stage,
@@ -210,8 +220,10 @@ public class CheckMyLetterController {
             );
             new Thread(downloadTask).start();
         });
-        loadTask.setOnFailed(e ->
+        loadTask.setOnFailed(_ ->
                 showAlert(Alert.AlertType.ERROR,"File download", loadTask.getException().getMessage()));
+        loadTask.setOnSucceeded(_ ->
+                showAlert(Alert.AlertType.INFORMATION, "File download", "File downloaded successfully."));
         new Thread(loadTask).start();
     }
 

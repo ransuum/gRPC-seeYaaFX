@@ -31,6 +31,7 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
     private final RsaCredentials rsaCredentials;
 
     private static final String USER_NOT_LOGGED_IN = "User is not logged in";
+    private static final String INVALID_CREDENTIALS = "Invalid email or password";
 
     @Override
     public void signUp(SignUpRequest request, StreamObserver<Empty> responseObserver) {
@@ -91,26 +92,41 @@ public class UserService extends UsersServiceGrpc.UsersServiceImplBase {
     @Override
     public void authentication(SignInRequest request, StreamObserver<SignInResponse> responseObserver) {
         try {
+            if (request.getCredentialsBase64().isBlank()) {
+                throw Status.UNAUTHENTICATED.withDescription("Credentials required").asRuntimeException();
+            }
             String[] creds = rsaCredentials.decrypt(request.getCredentialsBase64());
             String email = creds[0];
             String password = creds[1];
+            java.util.Arrays.fill(creds, null);
 
             var user = userRepository.findByEmail(email)
-                    .filter(u -> BCrypt.verifyer().verify(password.toCharArray(), u.getPassword()).verified)
-                    .orElseThrow(() -> Status.NOT_FOUND.withDescription("Invalid credentials").asRuntimeException());
-
+                    .orElseThrow(() -> {
+                        log.warn("Failed login attempt for email: {}", email);
+                        return Status.UNAUTHENTICATED.withDescription(INVALID_CREDENTIALS).asRuntimeException();
+                    });
+            if (!BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
+                log.warn("Invalid password for email: {}", email);
+                throw Status.UNAUTHENTICATED.withDescription(INVALID_CREDENTIALS).asRuntimeException();
+            }
             authenticationStore.set(new AuthenticationObject(email, user.getRoles()));
 
+            log.info("User authenticated successfully: {}", email);
             responseObserver.onNext(SignInResponse.newBuilder()
                     .setEmail(email)
                     .build());
             responseObserver.onCompleted();
-
         } catch (StatusRuntimeException sre) {
             responseObserver.onError(sre);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid credential format", e);
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("Invalid credential format")
+                    .asRuntimeException());
         } catch (Exception e) {
+            log.error("Authentication error", e);
             responseObserver.onError(Status.UNAUTHENTICATED
-                    .withDescription(e.getMessage())
+                    .withDescription(INVALID_CREDENTIALS)
                     .asRuntimeException());
         }
     }
