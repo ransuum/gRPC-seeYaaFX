@@ -3,14 +3,14 @@ package org.parent.service;
 import com.seeYaa.proto.email.Files;
 import com.seeYaa.proto.email.service.storage.FileIdRequest;
 import com.seeYaa.proto.email.service.storage.StorageServiceGrpc;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import module java.base;
+import java.io.*;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -26,48 +26,35 @@ public class FileDownloadService {
         };
     }
 
-    public Task<Void> createDownloadTask(Files completeFile, Stage stage, Runnable onDone, Consumer<Exception> onError) {
-        return new Task<>() {
-            @Override
-            protected Void call() {
-                var saveFile = getSaveFileFromUser(stage, completeFile.getName());
-                if (saveFile != null) {
-                    try {
-                        copyToFile(completeFile.getData().toByteArray(), saveFile);
-                        if (onDone != null) Platform.runLater(onDone);
-                    } catch (Exception ex) {
-                        if (onError != null) Platform.runLater(() -> onError.accept(ex));
-                    }
+    public void downloadFile(Files completeFile, Stage stage, Runnable onSuccess, Consumer<Exception> onError) {
+        var fileChooser = new FileChooser();
+        fileChooser.setTitle("Save File");
+        fileChooser.setInitialFileName(completeFile.getName());
+
+        File saveFile = fileChooser.showSaveDialog(stage);
+
+        if (saveFile != null) {
+            Task<Void> downloadTask = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    copyToFile(completeFile.getData().toByteArray(), saveFile);
+                    return null;
                 }
-                return null;
-            }
-        };
-    }
+            };
 
-    private File getSaveFileFromUser(Stage stage, String fileName) {
-        File[] selectedFile = new File[1];
-        var latch = new CountDownLatch(1);
+            downloadTask.setOnSucceeded(_ -> {
+                if (onSuccess != null) onSuccess.run();
+            });
+            downloadTask.setOnFailed(_ -> {
+                if (onError != null) onError.accept((Exception) downloadTask.getException());
+            });
 
-        Platform.runLater(() -> {
-            var fileChooser = new FileChooser();
-            fileChooser.setTitle("Save File");
-            fileChooser.setInitialFileName(fileName);
-            selectedFile[0] = fileChooser.showSaveDialog(stage);
-            latch.countDown();
-        });
-
-        try {
-            latch.await();
-        } catch (InterruptedException _) {
-            Thread.currentThread().interrupt();
-            return null;
+            new Thread(downloadTask).start();
         }
-        return selectedFile[0];
     }
 
     private void copyToFile(byte[] data, File outFile) throws IOException {
-        try (InputStream is = new ByteArrayInputStream(data);
-             var fos = new FileOutputStream(outFile)) {
+        try (InputStream is = new ByteArrayInputStream(data); var fos = new FileOutputStream(outFile)) {
             byte[] buffer = new byte[1024 * 1024];
             int bytesRead;
             while ((bytesRead = is.read(buffer)) != -1)

@@ -213,17 +213,15 @@ public class CheckMyLetterController {
         Task<Files> loadTask = fileDownloadService.createFileLoadTask(meta.getId());
         loadTask.setOnSucceeded(_ -> {
             final Files completeFile = loadTask.getValue();
-            Task<Void> downloadTask = fileDownloadService.createDownloadTask(
+            fileDownloadService.downloadFile(
                     completeFile, stage,
-                    () -> {},
-                    _ -> {}
+                    () -> showAlert(Alert.AlertType.INFORMATION, "File download", "File downloaded successfully."),
+                    ex -> showAlert(Alert.AlertType.ERROR, "File download", "Error: " + ex.getMessage())
             );
-            new Thread(downloadTask).start();
         });
         loadTask.setOnFailed(_ ->
-                showAlert(Alert.AlertType.ERROR,"File download", loadTask.getException().getMessage()));
-        loadTask.setOnSucceeded(_ ->
-                showAlert(Alert.AlertType.INFORMATION, "File download", "File downloaded successfully."));
+                showAlert(Alert.AlertType.ERROR, "File download", "Failed to load file: " + loadTask.getException().getMessage()));
+
         new Thread(loadTask).start();
     }
 
